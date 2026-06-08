@@ -88,24 +88,6 @@ export function SpeechAnalysisPanel({ ST, t, analysis }: Props) {
         />
       </div>
 
-      <div className={`rounded-xl p-3 border space-y-2 ${ST.recordTipsBox}`}>
-        <p className={`text-[10px] font-bold uppercase ${ST.aspectLabel}`}>{t("ogeBenchmark")}</p>
-        <ul className={`text-[11px] space-y-1 ${ST.workflowSubtitle}`}>
-          <li>
-            {analysis.ogeWordBandOk ? "✓" : "○"} {t("ogeWordsTarget")}
-          </li>
-          <li>
-            {analysis.ogeGrammarOk ? "✓" : "○"} {t("ogeGrammarTarget", { count: analysis.estimatedGrammarIssues })}
-          </li>
-          <li>
-            {analysis.introDetected ? "✓" : "○"} {t("ogeIntroTarget")}
-          </li>
-          <li>
-            {analysis.outroDetected ? "✓" : "○"} {t("ogeOutroTarget")}
-          </li>
-        </ul>
-      </div>
-
       {analysis.fillerBuckets.length > 0 && (
         <div className="space-y-2">
           <p className={`text-[10px] font-bold uppercase ${ST.aspectLabel}`}>{t("fillerChartTitle")}</p>

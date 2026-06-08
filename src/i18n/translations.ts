@@ -108,11 +108,6 @@ export type TranslationKey =
   | "metricSentenceHint"
   | "metricPauses"
   | "metricPausesHint"
-  | "ogeBenchmark"
-  | "ogeWordsTarget"
-  | "ogeGrammarTarget"
-  | "ogeIntroTarget"
-  | "ogeOutroTarget"
   | "fillerChartTitle"
   | "fillerChartDesc"
   | "fillerBucketLabel";
@@ -230,11 +225,6 @@ const en: Record<TranslationKey, string> = {
   metricSentenceHint: "{count} sentences total",
   metricPauses: "Long pauses",
   metricPausesHint: "Pauses over 3 seconds",
-  ogeBenchmark: "OGE checklist",
-  ogeWordsTarget: "Word count in range 100–180 (ideal 120–130)",
-  ogeGrammarTarget: "Estimated grammar issues ≤ 2 (detected: {count})",
-  ogeIntroTarget: "Clear introduction phrase",
-  ogeOutroTarget: "Clear closing + thank you",
   fillerChartTitle: "Filler words over time",
   fillerChartDesc: "Total fillers: {total}. Each bar = 10 seconds of speech.",
   fillerBucketLabel: "{start}s–{start}s+10: {count} fillers",
@@ -352,11 +342,6 @@ const ru: Record<TranslationKey, string> = {
   metricSentenceHint: "Всего предложений: {count}",
   metricPauses: "Длинные паузы",
   metricPausesHint: "Паузы более 3 секунд",
-  ogeBenchmark: "Чеклист ОГЭ",
-  ogeWordsTarget: "Объём 100–180 слов (идеал 120–130)",
-  ogeGrammarTarget: "Оценка грамматики ≤ 2 (найдено: {count})",
-  ogeIntroTarget: "Есть вступительная фраза",
-  ogeOutroTarget: "Есть заключение и благодарность",
   fillerChartTitle: "Слова-паразиты по времени",
   fillerChartDesc: "Всего паразитов: {total}. Каждый столбец — 10 секунд речи.",
   fillerBucketLabel: "{start}–{start}+10 с: {count} шт.",
