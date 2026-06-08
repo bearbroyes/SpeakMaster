@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from "react";
+import { useMemo, type Dispatch, type SetStateAction } from "react";
 import { motion } from "motion/react";
 import {
   Check,
@@ -18,6 +18,9 @@ import type { ThemeStyles } from "../themes";
 import type { TranslationKey } from "../i18n/translations";
 import { triggerDownload, shareRecording } from "../utils/download";
 import { buildRecordingFilename } from "../utils/filename";
+import { analyzeSpeechOffline } from "../utils/speechAnalysis";
+import type { FillerEvent } from "../utils/speechAnalysis";
+import { SpeechAnalysisPanel } from "./SpeechAnalysisPanel";
 
 interface Props {
   ST: ThemeStyles;
@@ -30,6 +33,9 @@ interface Props {
   topicProgress: TopicProgress | undefined;
   transcript: string;
   fillerCount: number;
+  recordingDurationSeconds: number;
+  fillerTimeline: FillerEvent[];
+  pauseEvents: number[];
   aiFeedback: string | null;
   isAnalyzing: boolean;
   onDownload: () => void;
@@ -49,6 +55,9 @@ export function ResultPhase({
   topicProgress,
   transcript,
   fillerCount,
+  recordingDurationSeconds,
+  fillerTimeline,
+  pauseEvents,
   aiFeedback,
   isAnalyzing,
   onDownload,
@@ -59,6 +68,15 @@ export function ResultPhase({
   const filename = recordingBlob
     ? buildRecordingFilename(monologue, recordingBlob.type)
     : `Monologue_${monologue.id.toString().padStart(2, "0")}`;
+
+  const speechAnalysis = useMemo(
+    () =>
+      analyzeSpeechOffline(transcript, recordingDurationSeconds, {
+        fillerTimeline,
+        pauseEvents,
+      }),
+    [transcript, recordingDurationSeconds, fillerTimeline, pauseEvents]
+  );
 
   const rubricItems: { key: keyof RubricAnswers; title: TranslationKey; desc: TranslationKey }[] = [
     { key: "coveredAllPoints", title: "rubric1Title", desc: "rubric1Desc" },
@@ -140,6 +158,8 @@ export function ResultPhase({
               <p className={`${ST.fillerText} font-mono`}>{t("fillerWords", { count: fillerCount })}</p>
             </div>
           )}
+
+          {speechAnalysis && <SpeechAnalysisPanel ST={ST} t={t} analysis={speechAnalysis} />}
 
           {(isAnalyzing || aiFeedback) && (
             <div className={`rounded-2xl p-4 border text-xs space-y-2 ${ST.aspectItem}`}>

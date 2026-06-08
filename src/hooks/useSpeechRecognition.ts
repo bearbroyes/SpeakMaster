@@ -1,15 +1,24 @@
-import { useCallback, useState } from "react";
-import { countFillerWords, getSpeechRecognition } from "../utils/speech";
+import { useCallback, useRef, useState } from "react";
+import { countFillerWords, findFillersInChunk, getSpeechRecognition } from "../utils/speech";
+import type { FillerEvent } from "../utils/speechAnalysis";
 import { analyzeTranscript } from "../utils/gemini";
+
+const LONG_PAUSE_SEC = 3;
 
 export function useSpeechRecognition() {
   const [transcript, setTranscript] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [fillerCount, setFillerCount] = useState(0);
+  const [fillerTimeline, setFillerTimeline] = useState<FillerEvent[]>([]);
+  const [pauseEvents, setPauseEvents] = useState<number[]>([]);
   const [aiFeedback, setAiFeedback] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  const startLiveRecognition = useCallback(() => {
+  const lastFinalAtRef = useRef(0);
+  const timelineRef = useRef<FillerEvent[]>([]);
+  const pausesRef = useRef<number[]>([]);
+
+  const startLiveRecognition = useCallback((getElapsed?: () => number) => {
     const recognition = getSpeechRecognition();
     if (!recognition) return false;
 
@@ -18,12 +27,36 @@ export function useSpeechRecognition() {
     recognition.lang = "en-US";
 
     let finalText = "";
+    lastFinalAtRef.current = Date.now();
+    timelineRef.current = [];
+    pausesRef.current = [];
+    setFillerTimeline([]);
+    setPauseEvents([]);
+
     recognition.onresult = (event: SpeechRecognitionEvent) => {
       let interim = "";
+      const now = Date.now();
+      const elapsed = () => Math.max(0, Math.round(getElapsed?.() ?? (now - lastFinalAtRef.current) / 1000));
+
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const text = event.results[i][0].transcript;
-        if (event.results[i].isFinal) finalText += text + " ";
-        else interim += text;
+        if (event.results[i].isFinal) {
+          const gapSec = (now - lastFinalAtRef.current) / 1000;
+          if (gapSec >= LONG_PAUSE_SEC && finalText.length > 0) {
+            pausesRef.current.push(elapsed());
+            setPauseEvents([...pausesRef.current]);
+          }
+          lastFinalAtRef.current = now;
+
+          for (const word of findFillersInChunk(text)) {
+            timelineRef.current.push({ second: elapsed(), word });
+          }
+          setFillerTimeline([...timelineRef.current]);
+
+          finalText += text + " ";
+        } else {
+          interim += text;
+        }
       }
       const combined = (finalText + interim).trim();
       setTranscript(combined);
@@ -70,14 +103,21 @@ export function useSpeechRecognition() {
   const reset = useCallback(() => {
     setTranscript("");
     setFillerCount(0);
+    setFillerTimeline([]);
+    setPauseEvents([]);
     setAiFeedback(null);
     setIsAnalyzing(false);
+    timelineRef.current = [];
+    pausesRef.current = [];
+    lastFinalAtRef.current = 0;
   }, []);
 
   return {
     transcript,
     isListening,
     fillerCount,
+    fillerTimeline,
+    pauseEvents,
     aiFeedback,
     isAnalyzing,
     startLiveRecognition,

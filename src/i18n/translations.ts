@@ -97,7 +97,25 @@ export type TranslationKey =
   | "aiAnalyzing"
   | "aiFeedback"
   | "cheatSheet"
-  | "coreRubrics";
+  | "coreRubrics"
+  | "speechAnalysisTitle"
+  | "speechAnalysisDesc"
+  | "metricWords"
+  | "metricWordsHint"
+  | "metricWpm"
+  | "metricWpmHint"
+  | "metricSentenceLen"
+  | "metricSentenceHint"
+  | "metricPauses"
+  | "metricPausesHint"
+  | "ogeBenchmark"
+  | "ogeWordsTarget"
+  | "ogeGrammarTarget"
+  | "ogeIntroTarget"
+  | "ogeOutroTarget"
+  | "fillerChartTitle"
+  | "fillerChartDesc"
+  | "fillerBucketLabel";
 
 const en: Record<TranslationKey, string> = {
   appSubtitle: "Exam Monologue rehearsal deck",
@@ -202,6 +220,24 @@ const en: Record<TranslationKey, string> = {
   aiFeedback: "AI feedback",
   cheatSheet: "Exam phrases cheat sheet",
   coreRubrics: "Core rubrics ({count}):",
+  speechAnalysisTitle: "Offline speech analysis",
+  speechAnalysisDesc: "Metrics from your live transcript — no AI required. Compare with OGE expectations.",
+  metricWords: "Words",
+  metricWordsHint: "OGE ideal: 120–130 words",
+  metricWpm: "Pace (WPM)",
+  metricWpmHint: "Comfortable range: 90–160 WPM",
+  metricSentenceLen: "Avg. sentence",
+  metricSentenceHint: "{count} sentences total",
+  metricPauses: "Long pauses",
+  metricPausesHint: "Pauses over 3 seconds",
+  ogeBenchmark: "OGE checklist",
+  ogeWordsTarget: "Word count in range 100–180 (ideal 120–130)",
+  ogeGrammarTarget: "Estimated grammar issues ≤ 2 (detected: {count})",
+  ogeIntroTarget: "Clear introduction phrase",
+  ogeOutroTarget: "Clear closing + thank you",
+  fillerChartTitle: "Filler words over time",
+  fillerChartDesc: "Total fillers: {total}. Each bar = 10 seconds of speech.",
+  fillerBucketLabel: "{start}s–{start}s+10: {count} fillers",
 };
 
 const ru: Record<TranslationKey, string> = {
@@ -306,6 +342,24 @@ const ru: Record<TranslationKey, string> = {
   aiFeedback: "Обратная связь ИИ",
   cheatSheet: "Шпаргалка фраз для экзамена",
   coreRubrics: "Пункты плана ({count}):",
+  speechAnalysisTitle: "Анализ речи (офлайн)",
+  speechAnalysisDesc: "Метрики из транскрипта — без ИИ. Сравните с требованиями ОГЭ.",
+  metricWords: "Слов",
+  metricWordsHint: "Эталон ОГЭ: 120–130 слов",
+  metricWpm: "Темп (сл/мин)",
+  metricWpmHint: "Комфортно: 90–160 слов/мин",
+  metricSentenceLen: "Средн. фраза",
+  metricSentenceHint: "Всего предложений: {count}",
+  metricPauses: "Длинные паузы",
+  metricPausesHint: "Паузы более 3 секунд",
+  ogeBenchmark: "Чеклист ОГЭ",
+  ogeWordsTarget: "Объём 100–180 слов (идеал 120–130)",
+  ogeGrammarTarget: "Оценка грамматики ≤ 2 (найдено: {count})",
+  ogeIntroTarget: "Есть вступительная фраза",
+  ogeOutroTarget: "Есть заключение и благодарность",
+  fillerChartTitle: "Слова-паразиты по времени",
+  fillerChartDesc: "Всего паразитов: {total}. Каждый столбец — 10 секунд речи.",
+  fillerBucketLabel: "{start}–{start}+10 с: {count} шт.",
 };
 
 export const translations: Record<Lang, Record<TranslationKey, string>> = { en, ru };

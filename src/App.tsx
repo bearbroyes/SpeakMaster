@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useMemo, useCallback, type MouseEvent } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef, type MouseEvent } from "react";
 import { AnimatePresence } from "motion/react";
 import { Star } from "lucide-react";
 import { motion } from "motion/react";
@@ -54,6 +54,8 @@ export default function App() {
   >([]);
 
   const speech = useSpeechRecognition();
+  const recordingElapsedRef = useRef(0);
+  const [lastRecordingDuration, setLastRecordingDuration] = useState(0);
 
   const handleRecordingComplete = useCallback(
     (data: {
@@ -68,6 +70,7 @@ export default function App() {
         fluencyFillerWords: speech.fillerCount <= 2,
       };
       setRubricAnswers(rubric);
+      setLastRecordingDuration(data.durationSeconds);
       if (activeMonologue) {
         const updated = recordAttempt(
           activeMonologue.id,
@@ -154,6 +157,7 @@ export default function App() {
     if (phase === "RECORDING") {
       interval = setInterval(() => {
         recording.setRecordingSeconds((prev) => {
+          recordingElapsedRef.current = 120 - prev + 1;
           if (prev <= 1) {
             clearInterval(interval!);
             recording.stopRecording();
@@ -171,7 +175,8 @@ export default function App() {
   const beginRecording = async () => {
     if (!activeMonologue) return;
     speech.reset();
-    speech.startLiveRecognition();
+    recordingElapsedRef.current = 0;
+    speech.startLiveRecognition(() => recordingElapsedRef.current);
     try {
       await recording.startRecording(activeMonologue);
       setPhase("RECORDING");
@@ -355,6 +360,9 @@ export default function App() {
               topicProgress={getTopicProgress(activeMonologue.id)}
               transcript={speech.transcript}
               fillerCount={speech.fillerCount}
+              recordingDurationSeconds={lastRecordingDuration}
+              fillerTimeline={speech.fillerTimeline}
+              pauseEvents={speech.pauseEvents}
               aiFeedback={speech.aiFeedback}
               isAnalyzing={speech.isAnalyzing}
               onDownload={() =>

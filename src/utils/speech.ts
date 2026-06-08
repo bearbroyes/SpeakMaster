@@ -1,4 +1,15 @@
-const FILLER_WORDS = ["um", "uh", "like", "you know", "well", "so", "actually", "basically"];
+export const FILLER_WORDS = ["um", "uh", "like", "you know", "well", "so", "actually", "basically"];
+
+export function findFillersInChunk(chunk: string): string[] {
+  const found: string[] = [];
+  const lower = chunk.toLowerCase();
+  for (const phrase of FILLER_WORDS) {
+    const regex = new RegExp(`\\b${phrase.replace(/\s/g, "\\s+")}\\b`, "gi");
+    const matches = lower.match(regex);
+    if (matches) found.push(...matches.map((m) => m.toLowerCase()));
+  }
+  return found;
+}
 
 export function countFillerWords(transcript: string): number {
   const lower = transcript.toLowerCase();
