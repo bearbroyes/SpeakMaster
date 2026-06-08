@@ -1,4 +1,9 @@
-import { countFillerWords, FILLER_WORDS } from "./speech";
+import { countFillerWords, findFillerOccurrences, summarizeFillerCounts, FILLER_WORDS } from "./speech";
+
+export interface FillerBreakdownItem {
+  word: string;
+  count: number;
+}
 
 export interface FillerEvent {
   second: number;
@@ -16,6 +21,8 @@ export interface SpeechAnalysis {
   longPauseCount: number;
   estimatedGrammarIssues: number;
   fillerCount: number;
+  fillerOccurrences: string[];
+  fillerBreakdown: FillerBreakdownItem[];
   fillerTimeline: FillerEvent[];
   fillerBuckets: number[];
   wpmStatus: MetricStatus;
@@ -259,7 +266,9 @@ export function analyzeSpeechOffline(
   const longPauseCount = pauseEvents.length;
 
   const estimatedGrammarIssues = estimateGrammarIssues(cleanedTranscript);
-  const fillerCount = countFillerWords(cleanedTranscript);
+  const fillerOccurrences = findFillerOccurrences(cleanedTranscript);
+  const fillerCount = fillerOccurrences.length;
+  const fillerBreakdown = summarizeFillerCounts(fillerOccurrences);
   const fillerTimeline = estimateFillerTimeline(cleanedTranscript, durationSeconds, options.fillerTimeline);
   const fillerBuckets = buildFillerBuckets(fillerTimeline, durationSeconds);
 
@@ -272,6 +281,8 @@ export function analyzeSpeechOffline(
     longPauseCount,
     estimatedGrammarIssues,
     fillerCount,
+    fillerOccurrences,
+    fillerBreakdown,
     fillerTimeline,
     fillerBuckets,
     wpmStatus: statusForWpm(wpm),

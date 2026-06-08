@@ -88,6 +88,45 @@ export function SpeechAnalysisPanel({ ST, t, analysis }: Props) {
         />
       </div>
 
+      {analysis.fillerCount > 0 ? (
+        <div className="space-y-2">
+          <p className={`text-[10px] font-bold uppercase ${ST.aspectLabel}`}>{t("fillerListTitle")}</p>
+          <div className="flex flex-wrap gap-1.5">
+            {analysis.fillerBreakdown.map((item) => (
+              <span
+                key={item.word}
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold border ${ST.warningBadge}`}
+              >
+                <span className="font-mono">{item.word}</span>
+                <span className={`opacity-70 ${ST.fillerText}`}>×{item.count}</span>
+              </span>
+            ))}
+          </div>
+          {analysis.fillerTimeline.length > 0 && (
+            <ul className={`space-y-1 text-[11px] font-mono ${ST.workflowSubtitle}`}>
+              {analysis.fillerTimeline.map((ev, i) => {
+                const mins = Math.floor(ev.second / 60);
+                const secs = ev.second % 60;
+                const time = `${mins}:${secs.toString().padStart(2, "0")}`;
+                return (
+                  <li key={`${ev.second}-${ev.word}-${i}`} className="flex items-center gap-2">
+                    <span className={`${ST.iconMuted} shrink-0`}>{time}</span>
+                    <span className={ST.fillerText}>{ev.word}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          {analysis.fillerTimeline.length === 0 && (
+            <p className={`text-[11px] font-mono ${ST.workflowSubtitle}`}>
+              {analysis.fillerOccurrences.join(" · ")}
+            </p>
+          )}
+        </div>
+      ) : (
+        <p className={`text-[11px] ${ST.workflowSubtitle}`}>{t("fillerListEmpty")}</p>
+      )}
+
       {analysis.fillerBuckets.length > 0 && (
         <div className="space-y-2">
           <p className={`text-[10px] font-bold uppercase ${ST.aspectLabel}`}>{t("fillerChartTitle")}</p>

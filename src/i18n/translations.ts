@@ -110,7 +110,9 @@ export type TranslationKey =
   | "metricPausesHint"
   | "fillerChartTitle"
   | "fillerChartDesc"
-  | "fillerBucketLabel";
+  | "fillerBucketLabel"
+  | "fillerListTitle"
+  | "fillerListEmpty";
 
 const en: Record<TranslationKey, string> = {
   appSubtitle: "Exam Monologue rehearsal deck",
@@ -228,6 +230,8 @@ const en: Record<TranslationKey, string> = {
   fillerChartTitle: "Filler words over time",
   fillerChartDesc: "Total fillers: {total}. Each bar = 10 seconds of speech.",
   fillerBucketLabel: "{start}s–{start}s+10: {count} fillers",
+  fillerListTitle: "Filler words found",
+  fillerListEmpty: "No filler words detected — great fluency!",
 };
 
 const ru: Record<TranslationKey, string> = {
@@ -345,6 +349,8 @@ const ru: Record<TranslationKey, string> = {
   fillerChartTitle: "Слова-паразиты по времени",
   fillerChartDesc: "Всего паразитов: {total}. Каждый столбец — 10 секунд речи.",
   fillerBucketLabel: "{start}–{start}+10 с: {count} шт.",
+  fillerListTitle: "Какие слова-паразиты были",
+  fillerListEmpty: "Слов-паразитов не найдено — отличная беглость!",
 };
 
 export const translations: Record<Lang, Record<TranslationKey, string>> = { en, ru };

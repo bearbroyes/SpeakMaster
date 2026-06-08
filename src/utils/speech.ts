@@ -11,15 +11,33 @@ export function findFillersInChunk(chunk: string): string[] {
   return found;
 }
 
-export function countFillerWords(transcript: string): number {
+export function findFillerOccurrences(transcript: string): string[] {
   const lower = transcript.toLowerCase();
-  let count = 0;
-  for (const word of FILLER_WORDS) {
-    const regex = new RegExp(`\\b${word.replace(/\s/g, "\\s+")}\\b`, "gi");
-    const matches = lower.match(regex);
-    if (matches) count += matches.length;
+  const hits: { index: number; word: string }[] = [];
+
+  for (const phrase of FILLER_WORDS) {
+    const regex = new RegExp(`\\b${phrase.replace(/\s/g, "\\s+")}\\b`, "gi");
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(lower)) !== null) {
+      hits.push({ index: match.index, word: match[0].toLowerCase() });
+    }
   }
-  return count;
+
+  return hits.sort((a, b) => a.index - b.index).map((h) => h.word);
+}
+
+export function summarizeFillerCounts(occurrences: string[]): { word: string; count: number }[] {
+  const map = new Map<string, number>();
+  for (const word of occurrences) {
+    map.set(word, (map.get(word) ?? 0) + 1);
+  }
+  return [...map.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([word, count]) => ({ word, count }));
+}
+
+export function countFillerWords(transcript: string): number {
+  return findFillerOccurrences(transcript).length;
 }
 
 export function getSpeechRecognition(): SpeechRecognition | null {

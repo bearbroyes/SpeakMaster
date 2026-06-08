@@ -152,6 +152,18 @@ export function ResultPhase({
               <h4 className={`font-bold ${ST.aspectLabel}`}>{t("transcript")}</h4>
               <p className={`leading-relaxed ${ST.workflowSubtitle}`}>{displayTranscript}</p>
               <p className={`${ST.fillerText} font-mono`}>{t("fillerWords", { count: displayFillerCount })}</p>
+              {speechAnalysis && speechAnalysis.fillerBreakdown.length > 0 && (
+                <div className="flex flex-wrap gap-1 pt-1">
+                  {speechAnalysis.fillerBreakdown.map((item) => (
+                    <span
+                      key={item.word}
+                      className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${ST.warningBadge}`}
+                    >
+                      {item.word} ×{item.count}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

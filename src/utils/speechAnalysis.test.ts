@@ -8,6 +8,7 @@ import {
   splitSentencesHeuristic,
   trimTranscriptAtOutro,
 } from "./speechAnalysis";
+import { findFillerOccurrences, summarizeFillerCounts } from "./speech";
 
 describe("speechAnalysis", () => {
   const sample =
@@ -49,6 +50,15 @@ describe("speechAnalysis", () => {
     );
     expect(buckets).toHaveLength(9);
     expect(buckets[9]).toBeUndefined();
+  });
+
+  it("lists specific filler words with counts", () => {
+    const text = "um I think like school is um good you know";
+    const occurrences = findFillerOccurrences(text);
+    expect(occurrences).toEqual(["um", "like", "um", "you know"]);
+    const breakdown = summarizeFillerCounts(occurrences);
+    expect(breakdown).toContainEqual({ word: "um", count: 2 });
+    expect(breakdown).toContainEqual({ word: "you know", count: 1 });
   });
 
   it("analyzes frozen session without post-recording noise", () => {
