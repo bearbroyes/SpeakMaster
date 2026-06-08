@@ -206,12 +206,17 @@
     </div>
 
     <!-- React App Root Container -->
-    <div id="root" class="gatekeeper-hidden"></div>
+    <div id="root" class="gatekeeper-hidden">
+      <p id="app-loading" style="text-align:center;padding:3rem 1.5rem;color:#94a3b8;font-size:0.95rem;">
+        Загрузка приложения…
+      </p>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
 
     <script>
       const ENV_CODE = "%VITE_CLASS_CODE%";
-      const SECRET_KEY = ENV_CODE.startsWith("%") ? "Oge_Monolog_012" : ENV_CODE;
+      const SECRET_KEY =
+        !ENV_CODE || ENV_CODE.startsWith("%") ? "Oge_Monolog_012" : ENV_CODE;
       const SESSION_KEY = "speakmaster_access";
 
       const overlay = document.getElementById("gatekeeper-overlay");

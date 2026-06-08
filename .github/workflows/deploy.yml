@@ -31,7 +31,17 @@ jobs:
         env:
           VITE_CLASS_CODE: ${{ secrets.VITE_CLASS_CODE }}
           VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
-        run: npm run build
+        run: |
+          if [ -z "$VITE_CLASS_CODE" ]; then export VITE_CLASS_CODE=Oge_Monolog_012; fi
+          npm run build
+
+      - name: Verify production bundle
+        run: |
+          if grep -q '/src/main.tsx' dist/index.html; then
+            echo 'dist/index.html still references dev entry — build failed'
+            exit 1
+          fi
+          test -f dist/assets/*.js
 
       - uses: actions/upload-pages-artifact@v3
         with:
