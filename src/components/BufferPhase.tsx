@@ -26,7 +26,9 @@ export function BufferPhase({ ST, t, bufferTimeLeft }: Props) {
         <p className={`text-xs max-w-xs mx-auto ${ST.bufferDesc}`}>{t("bufferDesc")}</p>
       </div>
 
-      <div
+      <motion.div
+        animate={{ scale: [1, 1.04, 1] }}
+        transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
         className={`h-32 w-32 mx-auto rounded-full flex items-center justify-center border ${ST.bufferCircle}`}
         aria-label={`${bufferTimeLeft} seconds`}
       >
@@ -41,7 +43,7 @@ export function BufferPhase({ ST, t, bufferTimeLeft }: Props) {
             {bufferTimeLeft}
           </motion.span>
         </AnimatePresence>
-      </div>
+      </motion.div>
 
       <span className={`text-[10px] italic block ${ST.bufferFooter}`}>{t("bufferNote")}</span>
     </motion.div>

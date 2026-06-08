@@ -40,7 +40,7 @@ function RecordingActions({
         ref={stopRef}
         type="button"
         onClick={onStop}
-        className="w-full min-h-14 py-5 bg-red-600 hover:bg-red-500 active:bg-red-700 text-white rounded-2xl font-black flex items-center justify-center gap-3 transition-colors cursor-pointer touch-manipulation shadow-lg shadow-red-900/30"
+        className={`w-full min-h-14 py-5 rounded-2xl font-black flex items-center justify-center gap-3 cursor-pointer touch-manipulation ${ST.dangerButton}`}
         aria-label={t("stopRecord")}
       >
         <svg
@@ -128,7 +128,7 @@ export function RecordingPhase({
             className={`relative z-0 md:col-span-7 order-2 md:order-1 p-6 sm:p-12 border-b md:border-b-0 md:border-r space-y-6 ${ST.cardDivider}`}
           >
             <div className="flex items-center gap-3">
-              <span className="px-3 py-1 bg-red-500 text-white text-[10px] font-bold rounded-lg uppercase animate-pulse">
+              <span className={`px-3 py-1 text-[10px] font-bold rounded-lg uppercase live-badge ${ST.phaseRecord}`}>
                 {t("liveRecording")}
               </span>
               <h2 className={`text-xl font-bold uppercase ${ST.workflowHeading}`}>Card {monologue.id}</h2>
@@ -140,7 +140,7 @@ export function RecordingPhase({
             <div className="space-y-3">
               <div className={`flex justify-between text-[10px] font-extrabold uppercase ${ST.aspectLabel}`}>
                 <span>{t("aspectsTracker")}</span>
-                <span className="text-amber-500 font-mono">
+                <span className={ST.aspectCounter}>
                   {t("aspectsVerified", { done, total: monologue.points.length })}
                 </span>
               </div>

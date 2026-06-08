@@ -259,7 +259,7 @@ export default function App() {
   return (
     <div
       id="app_root"
-      className={`min-h-screen ${ST.rootBg} font-sans antialiased flex flex-col selection:bg-indigo-500/30 transition-colors duration-300`}
+      className={`min-h-screen mesh-bg-animated ${ST.rootBg} ${ST.selectionAccent} font-sans antialiased flex flex-col transition-colors duration-500`}
       style={ROOT_BG_STYLES[theme]}
     >
       <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden" aria-hidden="true">

@@ -22,3 +22,112 @@
   animation: recording-ring-pulse 1.6s ease-out infinite;
 }
 
+@keyframes mesh-drift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.mesh-bg-animated {
+  background-size: 200% 200%;
+  animation: mesh-drift 18s ease-in-out infinite;
+}
+
+@keyframes badge-glow {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.35);
+  }
+  50% {
+    opacity: 0.92;
+    box-shadow: 0 0 12px 2px rgba(239, 68, 68, 0.25);
+  }
+}
+
+.live-badge {
+  animation: badge-glow 2s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stagger-fade {
+  animation: fade-up 0.45s ease backwards;
+}
+
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-120%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(220%) skewX(-12deg);
+  }
+}
+
+.card-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 42%,
+    rgba(255, 255, 255, 0.07) 50%,
+    transparent 58%
+  );
+  transform: translateX(-120%) skewX(-12deg);
+  animation: shimmer-sweep 5s ease-in-out infinite;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.hero-orb {
+  animation: float-orb 7s ease-in-out infinite;
+}
+
+@keyframes float-orb {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate(-8px, -12px) scale(1.08);
+    opacity: 0.85;
+  }
+}
+
+.hero-orb-delayed {
+  animation: float-orb 9s ease-in-out infinite reverse;
+}
+
+@keyframes logo-glow {
+  0%,
+  100% {
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.25);
+  }
+  50% {
+    box-shadow: 0 6px 28px rgba(99, 102, 241, 0.45);
+  }
+}
+
+.logo-glow {
+  animation: logo-glow 3s ease-in-out infinite;
+}

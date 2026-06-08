@@ -41,7 +41,7 @@ export function PreparationPhase({
       <div className="grid grid-cols-1 md:grid-cols-12 gap-0">
         <div className={`md:col-span-7 p-6 sm:p-12 border-b md:border-b-0 md:border-r space-y-6 ${ST.cardDivider}`}>
           <div className="flex items-center gap-3">
-            <span className="px-3 py-1 bg-amber-500 text-white text-[10px] font-bold rounded-lg uppercase">
+            <span className={`px-3 py-1 text-[10px] font-bold rounded-lg uppercase ${ST.phasePrep}`}>
               {t("prepPhase")}
             </span>
             <h2 className={`text-xl font-bold uppercase ${ST.workflowHeading}`}>
@@ -113,7 +113,7 @@ export function PreparationPhase({
             {practiceMode === "training" && (
               <button
                 onClick={onFinishEarly}
-                className="w-full py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl font-bold flex items-center justify-center gap-3 transition-all cursor-pointer"
+                className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-3 cursor-pointer ${ST.accentButton}`}
               >
                 <Play className="h-4 w-4 fill-white" />
                 <span>{t("startEarly")}</span>

@@ -10,8 +10,50 @@ const sharedExtras = {
     aspectInactive: "bg-white/5 border border-white/10 text-white",
     aspectActiveBadge: "bg-indigo-500 text-white",
     aspectInactiveBadge: "bg-white/10 text-slate-400",
-    retryButton: "bg-white/5 hover:bg-white/10 text-slate-300 border-white/15",
+    retryButton:
+      "bg-white/5 hover:bg-white/10 active:scale-[0.98] text-slate-300 border border-white/15 transition-all",
     footer: "border-white/10 text-slate-500 bg-transparent",
+    primaryButton:
+      "bg-indigo-500 hover:bg-indigo-400 active:scale-[0.98] text-white shadow-lg shadow-indigo-500/30 transition-all",
+    primaryButtonSm:
+      "bg-indigo-500 hover:bg-indigo-400 active:scale-[0.98] text-white shadow-md shadow-indigo-500/20 transition-all",
+    accentButton:
+      "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.98] text-white shadow-lg shadow-amber-500/25 transition-all",
+    dangerButton:
+      "bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 active:scale-[0.98] text-white shadow-lg shadow-red-900/35 transition-all",
+    surpriseButton:
+      "bg-gradient-to-r from-amber-500 via-fuchsia-500 to-indigo-600 hover:brightness-110 active:scale-[0.98] text-white shadow-lg shadow-indigo-500/20 border border-white/10 transition-all",
+    successBadge: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30",
+    warningBadge: "bg-amber-500/15 text-amber-300 border border-amber-500/30",
+    warningAlert: "bg-amber-500/10 border border-amber-500/25 text-amber-200",
+    statusSubmitted: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+    statusRecorded: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+    statusNotStarted: "bg-slate-500/10 text-slate-400 border-slate-500/20",
+    phasePrep: "bg-amber-500 text-white shadow-sm shadow-amber-500/30",
+    phaseRecord: "bg-red-500 text-white shadow-sm shadow-red-500/30",
+    micGranted: "bg-emerald-500/10 border border-emerald-500/25 text-emerald-300",
+    micPrompt:
+      "bg-amber-500/20 border border-amber-500/30 text-amber-300 hover:bg-amber-500/30 active:scale-[0.98] transition-all",
+    logoBox: "bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-500/30",
+    brandAccent: "text-indigo-400",
+    iconAccent: "text-indigo-400",
+    heroStepNum: "text-indigo-400",
+    heroGlow: "bg-indigo-500/15",
+    checkOn: "bg-indigo-500 border-indigo-400",
+    checkOff: "bg-transparent border-white/25",
+    fillerText: "text-amber-400",
+    langBtn: "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 transition-all",
+    themeSwitcherBg: "bg-white/5 border-white/10",
+    themeActive: "bg-indigo-600 text-white shadow-sm",
+    themeInactive: "text-slate-400 hover:text-indigo-300 transition-colors",
+    themeBtnDarkActive: "bg-slate-800 text-white shadow-sm",
+    themeBtnLightActive: "bg-white/15 text-white shadow-sm border border-white/20",
+    micDot: "bg-emerald-400 animate-pulse",
+    accentBullet: "text-indigo-400",
+    selectionAccent: "selection:bg-indigo-500/30",
+    aspectCounter: "text-amber-400 font-mono",
+    warningIcon: "text-amber-400",
+    iconMuted: "text-slate-400",
   },
   dark: {
     accentGlow: "from-indigo-500/15",
@@ -19,8 +61,50 @@ const sharedExtras = {
     aspectInactive: "bg-slate-950/40 border border-slate-800/80 text-slate-200",
     aspectActiveBadge: "bg-indigo-600 text-white",
     aspectInactiveBadge: "bg-slate-900 text-slate-500",
-    retryButton: "bg-slate-950/40 hover:bg-slate-950/60 text-slate-300 border-slate-800",
+    retryButton:
+      "bg-slate-950/40 hover:bg-slate-900 active:scale-[0.98] text-slate-300 border border-slate-700 transition-all",
     footer: "border-slate-800 text-slate-500 bg-transparent",
+    primaryButton:
+      "bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white shadow-lg shadow-indigo-600/25 transition-all",
+    primaryButtonSm:
+      "bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white shadow-md shadow-indigo-600/20 transition-all",
+    accentButton:
+      "bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 active:scale-[0.98] text-white shadow-lg shadow-amber-600/20 transition-all",
+    dangerButton:
+      "bg-gradient-to-r from-red-700 to-rose-700 hover:from-red-600 hover:to-rose-600 active:scale-[0.98] text-white shadow-lg shadow-red-950/40 transition-all",
+    surpriseButton:
+      "bg-gradient-to-r from-amber-600 via-fuchsia-600 to-indigo-700 hover:brightness-110 active:scale-[0.98] text-white shadow-lg shadow-indigo-900/30 border border-slate-700 transition-all",
+    successBadge: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25",
+    warningBadge: "bg-amber-500/10 text-amber-400 border border-amber-500/25",
+    warningAlert: "bg-amber-500/10 border border-amber-500/20 text-amber-300",
+    statusSubmitted: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+    statusRecorded: "bg-amber-500/15 text-amber-400 border-amber-500/30",
+    statusNotStarted: "bg-slate-800/50 text-slate-500 border-slate-700",
+    phasePrep: "bg-amber-600 text-white shadow-sm shadow-amber-600/25",
+    phaseRecord: "bg-red-600 text-white shadow-sm shadow-red-600/25",
+    micGranted: "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400",
+    micPrompt:
+      "bg-amber-500/15 border border-amber-500/25 text-amber-400 hover:bg-amber-500/25 active:scale-[0.98] transition-all",
+    logoBox: "bg-gradient-to-br from-indigo-600 to-slate-800 shadow-lg shadow-indigo-900/40",
+    brandAccent: "text-indigo-400",
+    iconAccent: "text-indigo-400",
+    heroStepNum: "text-indigo-400",
+    heroGlow: "bg-indigo-500/10",
+    checkOn: "bg-indigo-600 border-indigo-500",
+    checkOff: "bg-transparent border-slate-600",
+    fillerText: "text-amber-500",
+    langBtn: "bg-slate-950/40 border-slate-800 text-slate-300 hover:bg-slate-900 transition-all",
+    themeSwitcherBg: "bg-slate-950/40 border-slate-800",
+    themeActive: "bg-slate-700 text-white shadow-sm",
+    themeInactive: "text-slate-500 hover:text-slate-200 transition-colors",
+    themeBtnDarkActive: "bg-slate-700 text-white shadow-sm",
+    themeBtnLightActive: "bg-slate-600 text-white shadow-sm",
+    micDot: "bg-emerald-500 animate-pulse",
+    accentBullet: "text-indigo-400",
+    selectionAccent: "selection:bg-indigo-600/25",
+    aspectCounter: "text-amber-500 font-mono",
+    warningIcon: "text-amber-500",
+    iconMuted: "text-slate-500",
   },
   light: {
     accentGlow: "from-indigo-500/10",
@@ -28,8 +112,50 @@ const sharedExtras = {
     aspectInactive: "bg-slate-50 border border-slate-200 text-slate-800",
     aspectActiveBadge: "bg-indigo-600 text-white",
     aspectInactiveBadge: "bg-slate-200 text-slate-500",
-    retryButton: "bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200",
+    retryButton:
+      "bg-slate-100 hover:bg-slate-200 active:scale-[0.98] text-slate-700 border border-slate-200 transition-all",
     footer: "border-slate-200 text-slate-500 bg-white/50",
+    primaryButton:
+      "bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white shadow-md shadow-indigo-600/25 transition-all",
+    primaryButtonSm:
+      "bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white shadow-sm shadow-indigo-600/15 transition-all",
+    accentButton:
+      "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-[0.98] text-white shadow-md shadow-amber-500/20 transition-all",
+    dangerButton:
+      "bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 active:scale-[0.98] text-white shadow-md shadow-red-200 transition-all",
+    surpriseButton:
+      "bg-gradient-to-r from-amber-500 via-fuchsia-500 to-indigo-600 hover:brightness-105 active:scale-[0.98] text-white shadow-md border border-indigo-200/50 transition-all",
+    successBadge: "bg-emerald-50 text-emerald-800 border border-emerald-200",
+    warningBadge: "bg-amber-50 text-amber-900 border border-amber-200",
+    warningAlert: "bg-amber-50 border border-amber-200 text-amber-900",
+    statusSubmitted: "bg-emerald-50 text-emerald-800 border-emerald-200",
+    statusRecorded: "bg-amber-50 text-amber-900 border-amber-200",
+    statusNotStarted: "bg-slate-100 text-slate-600 border-slate-200",
+    phasePrep: "bg-amber-500 text-white shadow-sm",
+    phaseRecord: "bg-red-600 text-white shadow-sm",
+    micGranted: "bg-emerald-50 border border-emerald-200 text-emerald-700",
+    micPrompt:
+      "bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100 active:scale-[0.98] transition-all",
+    logoBox: "bg-gradient-to-br from-indigo-600 to-indigo-500 shadow-md shadow-indigo-300/40",
+    brandAccent: "text-indigo-600",
+    iconAccent: "text-indigo-600",
+    heroStepNum: "text-indigo-600",
+    heroGlow: "bg-indigo-400/10",
+    checkOn: "bg-indigo-600 border-indigo-500",
+    checkOff: "bg-white border-slate-300",
+    fillerText: "text-amber-700",
+    langBtn: "bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200 transition-all",
+    themeSwitcherBg: "bg-slate-100 border-slate-200",
+    themeActive: "bg-white text-indigo-600 shadow-sm border border-slate-200",
+    themeInactive: "text-slate-500 hover:text-slate-800 transition-colors",
+    themeBtnDarkActive: "bg-slate-700 text-white shadow-sm",
+    themeBtnLightActive: "bg-white text-indigo-600 shadow-sm border border-slate-200",
+    micDot: "bg-emerald-600 animate-pulse",
+    accentBullet: "text-indigo-600",
+    selectionAccent: "selection:bg-indigo-200",
+    aspectCounter: "text-amber-700 font-mono",
+    warningIcon: "text-amber-600",
+    iconMuted: "text-slate-500",
   },
 };
 
@@ -330,14 +456,14 @@ export const THEME_STYLES: Record<Theme, ThemeStyles> = {
 export const ROOT_BG_STYLES: Record<Theme, CSSProperties> = {
   violet: {
     backgroundImage:
-      "radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.4) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(192, 38, 211, 0.4) 0px, transparent 50%)",
+      "radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.45) 0px, transparent 55%), radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.25) 0px, transparent 45%), radial-gradient(at 100% 100%, rgba(192, 38, 211, 0.35) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.2) 0px, transparent 45%)",
   },
   dark: {
     backgroundImage:
-      "radial-gradient(at 0% 0%, rgba(30, 41, 59, 0.3) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.3) 0px, transparent 50%)",
+      "radial-gradient(at 0% 0%, rgba(51, 65, 85, 0.45) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.5) 0px, transparent 55%), radial-gradient(at 50% 0%, rgba(79, 70, 229, 0.12) 0px, transparent 40%)",
   },
   light: {
     backgroundImage:
-      "radial-gradient(at 0% 0%, rgba(203, 213, 225, 0.3) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(241, 245, 249, 0.4) 0px, transparent 50%)",
+      "radial-gradient(at 0% 0%, rgba(199, 210, 254, 0.45) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(241, 245, 249, 0.8) 0px, transparent 55%), radial-gradient(at 100% 0%, rgba(254, 243, 199, 0.35) 0px, transparent 40%)",
   },
 };

@@ -79,7 +79,7 @@ export function ResultPhase({
     >
       <div className={`backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-2xl border flex flex-col md:flex-row md:items-center justify-between gap-6 ${ST.banner}`}>
         <div className="space-y-3 max-w-xl">
-          <div className="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-300 text-xs font-bold py-1 px-3 rounded-full border border-emerald-500/20">
+          <div className={`inline-flex items-center gap-1.5 text-xs font-bold py-1 px-3 rounded-full border ${ST.successBadge}`}>
             <CheckCircle className="h-3.5 w-3.5" />
             <span>{t("completed")}</span>
           </div>
@@ -90,21 +90,21 @@ export function ResultPhase({
         <div className={`flex flex-col p-5 rounded-2xl min-w-48 border ${ST.bannerStep}`}>
           <span className={`text-[9px] uppercase font-bold ${ST.resultFileLabel}`}>{t("generatedFile")}</span>
           <div className="flex items-center gap-2 mt-1">
-            <FileAudio className="h-4 w-4 text-indigo-400" />
+            <FileAudio className={`h-4 w-4 ${ST.iconAccent}`} />
             <span className="font-mono text-xs font-bold break-all">{filename}</span>
           </div>
           {recordingBlob && (
             <div className="mt-3 flex flex-col gap-2">
               <button
                 onClick={onDownload}
-                className="py-1.5 px-3 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold rounded-lg flex items-center justify-center gap-1 cursor-pointer"
+                className={`py-1.5 px-3 text-[11px] font-bold rounded-lg flex items-center justify-center gap-1 cursor-pointer ${ST.primaryButtonSm}`}
               >
                 <Download className="h-3.5 w-3.5" />
                 {t("downloadAgain")}
               </button>
               <button
                 onClick={onShare}
-                className="py-1.5 px-3 bg-indigo-600/80 hover:bg-indigo-500 text-white text-[11px] font-bold rounded-lg flex items-center justify-center gap-1 cursor-pointer"
+                className={`py-1.5 px-3 text-[11px] font-bold rounded-lg flex items-center justify-center gap-1 cursor-pointer opacity-90 hover:opacity-100 ${ST.primaryButtonSm}`}
               >
                 <Share2 className="h-3.5 w-3.5" />
                 {t("shareViaPhone")}
@@ -117,7 +117,7 @@ export function ResultPhase({
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
         <div className={`md:col-span-5 rounded-3xl p-6 sm:p-8 shadow-xl border space-y-6 ${ST.workflowCard}`}>
           <div className={`flex items-center gap-2 border-b pb-4 ${ST.cardDivider}`}>
-            <Volume2 className="h-5 w-5 text-indigo-400" />
+            <Volume2 className={`h-5 w-5 ${ST.iconAccent}`} />
             <h3 className={`font-bold ${ST.workflowHeading}`}>{t("listenEvaluate")}</h3>
           </div>
 
@@ -128,7 +128,7 @@ export function ResultPhase({
             </div>
           ) : (
             <div className={`p-6 text-center border border-dashed rounded-2xl text-xs ${ST.emptyBanner}`}>
-              <MicOff className="h-8 w-8 mx-auto mb-2 text-slate-500" />
+              <MicOff className={`h-8 w-8 mx-auto mb-2 ${ST.iconMuted}`} />
               <p>{t("playbackOffline")}</p>
             </div>
           )}
@@ -137,7 +137,7 @@ export function ResultPhase({
             <div className={`rounded-2xl p-4 border text-xs space-y-2 ${ST.aspectItem}`}>
               <h4 className={`font-bold ${ST.aspectLabel}`}>{t("transcript")}</h4>
               <p className={`leading-relaxed ${ST.workflowSubtitle}`}>{transcript}</p>
-              <p className="text-amber-400 font-mono">{t("fillerWords", { count: fillerCount })}</p>
+              <p className={`${ST.fillerText} font-mono`}>{t("fillerWords", { count: fillerCount })}</p>
             </div>
           )}
 
@@ -156,7 +156,7 @@ export function ResultPhase({
           )}
 
           <div className={`rounded-2xl p-4 border text-xs space-y-2 ${ST.aspectItem}`}>
-            <h4 className="font-bold text-indigo-400 flex items-center gap-1.5">
+            <h4 className={`font-bold flex items-center gap-1.5 ${ST.iconAccent}`}>
               <Lightbulb className="h-4 w-4" />
               {t("examGuidelines")}
             </h4>
@@ -182,7 +182,7 @@ export function ResultPhase({
                 }`}
               >
                 <div className={`w-5 h-5 rounded-md flex items-center justify-center border mt-0.5 ${
-                  rubricAnswers[item.key] ? "bg-indigo-600 border-indigo-500" : "bg-transparent border-slate-500/40"
+                  rubricAnswers[item.key] ? ST.checkOn : ST.checkOff
                 }`}>
                   {rubricAnswers[item.key] && <Check className="h-3 w-3 text-white" />}
                 </div>
@@ -216,7 +216,7 @@ export function ResultPhase({
             </button>
             <button
               onClick={onBack}
-              className="flex-1 px-6 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black flex items-center justify-center gap-2 cursor-pointer"
+              className={`flex-1 px-6 py-4 rounded-2xl font-black flex items-center justify-center gap-2 cursor-pointer ${ST.primaryButton}`}
             >
               {t("chooseDifferent")}
               <ChevronRight className="h-4 w-4" />
