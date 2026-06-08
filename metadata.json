@@ -1,0 +1,6 @@
+{
+  "name": "Exam Monologue Practice",
+  "description": "An interactive practice tool for students to rehearse their exam speaking monologues with standard time limits, preparation phases, and real-time audio playback & download.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

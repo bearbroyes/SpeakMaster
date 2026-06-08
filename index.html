@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SpeakMasterPro - Rehearsal Deck</title>
+    <link rel="manifest" href="/SpeakMaster/manifest.json" />
+    <meta name="theme-color" content="#6366f1" />
+    <style>
+      /* Clean base reset styled to align with professional dark aesthetic themes */
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #0d0f17;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        color: #f8fafc;
+        overflow: hidden;
+      }
+
+      /* Hidden helper classes for loading sequence */
+      .gatekeeper-hidden {
+        display: none !important;
+      }
+      
+      /* Absolutely centered lock screen card with immersive backdrop */
+      #gatekeeper-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #07040f 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999999;
+        transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
+        padding: 1.5rem;
+        box-sizing: border-box;
+      }
+
+      .lock-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        padding: 2.5rem 2.25rem;
+        border-radius: 28px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        text-align: center;
+        box-sizing: border-box;
+      }
+
+      .lock-icon-container {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem auto;
+        box-shadow: 0 10px 25px rgba(99, 102, 241, 0.35);
+      }
+
+      .lock-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        margin: 0 0 0.5rem 0;
+        letter-spacing: -0.03em;
+        background: linear-gradient(135deg, #ffffff, #d8b4fe);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .lock-subtitle {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin: 0 0 2rem 0;
+        line-height: 1.5;
+        font-weight: 500;
+      }
+
+      .input-wrapper {
+        position: relative;
+        margin-bottom: 1.25rem;
+      }
+
+      .pass-input {
+        width: 100%;
+        padding: 14px 48px;
+        background: rgba(15, 23, 42, 0.65);
+        border: 1.5px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        color: #ffffff;
+        font-size: 1.05rem;
+        font-weight: 600;
+        outline: none;
+        box-sizing: border-box;
+        text-align: center;
+        letter-spacing: 0.08em;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      }
+
+      .toggle-password-btn {
+        position: absolute;
+        right: 14px;
+        top: 14px;
+        background: none;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.15s ease;
+        z-index: 10;
+      }
+
+      .toggle-password-btn:hover {
+        color: #e2e8f0;
+      }
+
+      .pass-input:focus {
+        border-color: #818cf8;
+        box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.25);
+        background: rgba(15, 23, 42, 0.85);
+      }
+
+      .error-msg {
+        color: #f87171;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-top: 0.6rem;
+        min-height: 1.25rem;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+      }
+
+      .error-msg.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .submit-btn {
+        width: 100%;
+        padding: 14px 24px;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        border: none;
+        border-radius: 14px;
+        color: #ffffff;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.1s ease, filter 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.35);
+      }
+
+      .submit-btn:hover {
+        filter: brightness(1.1);
+        box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+      }
+
+      .submit-btn:active {
+        transform: scale(0.98);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Access Control Gatekeeper -->
+    <div id="gatekeeper-overlay">
+      <div id="gatekeeper_card" class="lock-card">
+        <div class="lock-icon-container">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #ffffff;"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h2 class="lock-title">Access Locked</h2>
+        <p class="lock-subtitle">Please enter your authorization credential key below to launch SpeakMasterPro</p>
+        
+        <div class="input-wrapper">
+          <input type="password" id="pass_field_input" class="pass-input" placeholder="Type secret key here" autofocus />
+          <button type="button" id="toggle_password_btn" class="toggle-password-btn" aria-label="Toggle password visibility">
+            <svg id="eye_icon_show" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg id="eye_icon_hide" class="gatekeeper-hidden" xmlns="http://www.w3.org/2500/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+          </button>
+          <div id="error_container" class="error-msg">Incorrect key. Access denied.</div>
+        </div>
+        
+        <label class="remember-row" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;margin:1rem 0 0;font-size:0.75rem;color:#94a3b8;cursor:pointer;">
+          <input type="checkbox" id="remember_session" checked />
+          <span>Запомнить на этом устройстве</span>
+        </label>
+
+        <button id="gatekeeper_submit_btn" class="submit-btn" type="button">Enter Deck</button>
+
+        <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid rgba(255,255,255,0.08);">
+          <p style="font-size:0.7rem;color:#64748b;margin:0 0 0.75rem;">Сканируйте QR для открытия на телефоне:</p>
+          <img id="qr_code" alt="QR code" width="120" height="120" style="border-radius:12px;background:#fff;padding:6px;" />
+        </div>
+      </div>
+    </div>
+
+    <!-- React App Root Container -->
+    <div id="root" class="gatekeeper-hidden"></div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <script>
+      const ENV_CODE = "%VITE_CLASS_CODE%";
+      const SECRET_KEY = ENV_CODE.startsWith("%") ? "Oge_Monolog_012" : ENV_CODE;
+      const SESSION_KEY = "speakmaster_access";
+
+      const overlay = document.getElementById("gatekeeper-overlay");
+      const rootContainer = document.getElementById("root");
+      const input = document.getElementById("pass_field_input");
+      const button = document.getElementById("gatekeeper_submit_btn");
+      const errorLabel = document.getElementById("error_container");
+      const rememberCheckbox = document.getElementById("remember_session");
+      const qrImg = document.getElementById("qr_code");
+
+      document.body.style.overflow = "hidden";
+
+      if (qrImg) {
+        qrImg.src =
+          "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" +
+          encodeURIComponent(window.location.href.split("#")[0]);
+      }
+
+      function bypassLockScreen() {
+        overlay.style.opacity = "0";
+        overlay.style.visibility = "hidden";
+        rootContainer.classList.remove("gatekeeper-hidden");
+        document.body.style.overflow = "auto";
+        setTimeout(() => overlay.remove(), 500);
+      }
+
+      if (sessionStorage.getItem(SESSION_KEY) === "ok") {
+        bypassLockScreen();
+      }
+
+      function handleAuthentication() {
+        const value = input.value.trim();
+        if (value === SECRET_KEY) {
+          if (rememberCheckbox && rememberCheckbox.checked) {
+            sessionStorage.setItem(SESSION_KEY, "ok");
+          }
+          bypassLockScreen();
+        } else {
+          errorLabel.classList.add("visible");
+          input.style.borderColor = "#f87171";
+          input.select();
+        }
+      }
+
+      // Auto clear red error states when typing new key values
+      input.addEventListener("input", () => {
+        errorLabel.classList.remove("visible");
+        input.style.borderColor = "rgba(255, 255, 255, 0.1)";
+      });
+
+      // Submit on mouse/tap button action
+      button.addEventListener("click", handleAuthentication);
+
+      // Submit on physical or virtual Enter key inputs
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          handleAuthentication();
+        }
+      });
+
+      // Toggle password field character visibility
+      const togglePasswordBtn = document.getElementById("toggle_password_btn");
+      const eyeIconShow = document.getElementById("eye_icon_show");
+      const eyeIconHide = document.getElementById("eye_icon_hide");
+
+      togglePasswordBtn.addEventListener("click", () => {
+        if (input.type === "password") {
+          input.type = "text";
+          eyeIconShow.classList.add("gatekeeper-hidden");
+          eyeIconHide.classList.remove("gatekeeper-hidden");
+        } else {
+          input.type = "password";
+          eyeIconShow.classList.remove("gatekeeper-hidden");
+          eyeIconHide.classList.add("gatekeeper-hidden");
+        }
+      });
+    </script>
+  </body>
+</html>
+
