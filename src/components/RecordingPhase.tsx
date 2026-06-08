@@ -86,22 +86,26 @@ export function RecordingPhase({
 
         <div className={`md:col-span-5 flex flex-col items-center justify-center p-8 sm:p-12 ${ST.recordCol}`}>
           <div
-            className="relative flex items-center justify-center mb-8"
+            className="relative flex items-center justify-center w-48 h-48 mb-8"
             role="timer"
             aria-live="polite"
             aria-label={t("limitRemaining")}
           >
-            <div className="absolute w-48 h-48 rounded-full border-4 border-red-500/10 animate-ping" />
-            <div className={`w-32 h-32 rounded-full flex flex-col items-center justify-center border ${ST.circularTrack}`}>
+            <div
+              className="absolute inset-0 rounded-full border-4 border-red-500/10 animate-ping pointer-events-none"
+              aria-hidden="true"
+            />
+            <div className={`relative z-10 w-32 h-32 rounded-full flex flex-col items-center justify-center border ${ST.circularTrack}`}>
               <span className={`text-[9px] font-bold uppercase ${ST.clockLabel}`}>{t("limitRemaining")}</span>
               <span className={`text-3xl font-mono font-bold mt-1 ${ST.clockTime}`}>{formatTime(recordingSeconds)}</span>
             </div>
           </div>
 
-          <div className="w-full space-y-3">
+          <div className="relative z-10 w-full space-y-3">
             <button
+              type="button"
               onClick={onStop}
-              className="w-full py-5 bg-red-600 hover:bg-red-500 text-white rounded-2xl font-black flex items-center justify-center gap-3 transition-all cursor-pointer"
+              className="relative z-10 w-full py-5 bg-red-600 hover:bg-red-500 text-white rounded-2xl font-black flex items-center justify-center gap-3 transition-all cursor-pointer"
               aria-label={t("stopRecord")}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
