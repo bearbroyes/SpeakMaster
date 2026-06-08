@@ -6,7 +6,7 @@ import {
   mergeWithInterim,
   filterEventsByDuration,
 } from "../utils/speechAnalysis";
-import { analyzeTranscript } from "../utils/gemini";
+import { analyzeTranscript, GeminiError, isGeminiConfigured } from "../utils/gemini";
 
 const LONG_PAUSE_SEC = 3;
 
@@ -165,15 +165,21 @@ export function useSpeechRecognition() {
 
   const analyzeWithAI = useCallback(async (text: string, theme: string, points: string[]) => {
     if (!text.trim()) return;
-    if (!import.meta.env.VITE_GEMINI_API_KEY) return;
+    if (!isGeminiConfigured()) return;
 
     setIsAnalyzing(true);
     setAiFeedback(null);
     try {
       const feedback = await analyzeTranscript(text, theme, points);
       setAiFeedback(feedback);
-    } catch {
-      setAiFeedback("Не удалось получить анализ. Проверьте ключ API и ограничения в Google Cloud.");
+    } catch (err) {
+      let message = "Не удалось получить анализ.";
+      if (err instanceof GeminiError) {
+        message = err.hint ? `${err.message}\n\n${err.hint}` : err.message;
+      } else if (err instanceof Error && err.message) {
+        message = err.message;
+      }
+      setAiFeedback(message);
     } finally {
       setIsAnalyzing(false);
     }

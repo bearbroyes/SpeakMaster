@@ -31,8 +31,14 @@ jobs:
         env:
           VITE_CLASS_CODE: ${{ secrets.VITE_CLASS_CODE }}
           VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
+          VITE_GEMINI_PROXY_URL: ${{ secrets.VITE_GEMINI_PROXY_URL }}
         run: |
           if [ -z "$VITE_CLASS_CODE" ]; then export VITE_CLASS_CODE=Oge_Monolog_012; fi
+          if [ -z "$VITE_GEMINI_API_KEY" ] && [ -z "$VITE_GEMINI_PROXY_URL" ]; then
+            echo "::warning::VITE_GEMINI_API_KEY and VITE_GEMINI_PROXY_URL are empty — AI feedback disabled"
+          else
+            echo "Gemini configured (key or proxy present)"
+          fi
           npm run build
 
       - name: Verify production bundle

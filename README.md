@@ -51,18 +51,24 @@ Workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) собе
 
 ## Gemini на GitHub Pages — важно
 
-GitHub Pages отдаёт **только HTML/JS**. Отдельного сервера нет — Gemini вызывается **из браузера**, ключ вшивается в сборку при `npm run build`.
+Ключ вшивается при сборке (`VITE_GEMINI_API_KEY` в GitHub Secrets) **или** используется прокси (`VITE_GEMINI_PROXY_URL`).
 
-**Это значит:**
+### Если AI пишет «Не удалось получить анализ» — чаще всего referrer
 
-- Ключ **виден** в исходниках сайта (любой может его найти)
-- Чтобы снизить риск: в [Google AI Studio](https://aistudio.google.com/apikey) ограничьте ключ:
-  - **Application restrictions** → HTTP referrers
-  - Добавьте: `https://ВАШ_ЛОГИН.github.io/*`
+В [Google AI Studio](https://aistudio.google.com/apikey) откройте ключ → **Application restrictions** → **HTTP referrers** и добавьте:
 
-Без ограничения referrer ключ могут украсть и использовать с других сайтов.
+```
+https://bearbroyes.github.io/*
+http://localhost:*/*
+```
 
-**Альтернатива (безопаснее, но не «один сервер»):** бесплатный Cloudflare Worker / Vercel Function как прокси — ключ остаётся на сервере, Pages остаётся статическим.
+Сохраните и подождите 1–5 минут. Затем **Ctrl+Shift+R** на сайте.
+
+Убедитесь, что в GitHub → **Settings → Secrets → Actions** есть секрет `VITE_GEMINI_API_KEY` (без пробелов) и после изменения секрета был push в `main` (чтобы Actions пересобрал сайт).
+
+### Прокси (безопаснее)
+
+Готовый Worker: [`cloudflare/gemini-proxy/worker.js`](cloudflare/gemini-proxy/worker.js). После деплоя добавьте секрет `VITE_GEMINI_PROXY_URL` = URL worker. Ключ Gemini храните только в переменных Worker (`GEMINI_API_KEY`).
 
 ## Скрипты
 
