@@ -1,56 +1,71 @@
 import { describe, expect, it } from "vitest";
 import {
   analyzeSpeechOffline,
+  appendFinalChunk,
   buildFillerBuckets,
   countWords,
-  detectIntro,
-  detectOutro,
-  estimateGrammarIssues,
-  estimateFillerTimeline,
+  prepareTranscriptForAnalysis,
+  splitSentencesHeuristic,
+  trimTranscriptAtOutro,
 } from "./speechAnalysis";
 
 describe("speechAnalysis", () => {
   const sample =
-    "I am going to give a talk about school. Um, my school is big. We have many subjects. That is all I wanted to say. Thank you for listening.";
+    "I am going to give a talk about school um my school is big and we have many subjects and that is all I wanted to say thank you for listening";
 
-  it("counts words", () => {
-    expect(countWords(sample)).toBe(29);
+  it("counts english words only", () => {
+    expect(countWords(sample)).toBe(31);
+    expect(countWords("hello 123 world")).toBe(2);
   });
 
-  it("detects intro and outro", () => {
-    expect(detectIntro(sample)).toBe(true);
-    expect(detectOutro(sample)).toBe(true);
+  it("merges cumulative recognition chunks without duplication", () => {
+    let acc = "";
+    acc = appendFinalChunk(acc, "I am going to give a talk");
+    acc = appendFinalChunk(acc, "I am going to give a talk about school");
+    expect(countWords(acc)).toBe(9);
   });
 
-  it("estimates grammar issues for repeated words", () => {
-    expect(estimateGrammarIssues("He don't like it and he he went")).toBeGreaterThan(0);
+  it("trims garbage after outro phrase", () => {
+    const raw =
+      "my talk about holidays thank you for your attention you know offline Disney owns random noise";
+    const trimmed = trimTranscriptAtOutro(raw);
+    expect(trimmed).toBe("my talk about holidays thank you for your attention");
+    expect(trimmed).not.toContain("Disney");
   });
 
-  it("builds filler buckets", () => {
+  it("splits long unpunctuated transcript into sentences", () => {
+    const sentences = splitSentencesHeuristic(sample);
+    expect(sentences.length).toBeGreaterThan(1);
+  });
+
+  it("builds filler buckets within duration", () => {
     const buckets = buildFillerBuckets(
       [
         { second: 5, word: "um" },
         { second: 15, word: "like" },
-        { second: 55, word: "uh" },
+        { second: 95, word: "uh" },
       ],
-      60
+      90
     );
-    expect(buckets[0]).toBe(1);
-    expect(buckets[1]).toBe(1);
-    expect(buckets[5]).toBe(1);
+    expect(buckets).toHaveLength(9);
+    expect(buckets[9]).toBeUndefined();
   });
 
-  it("analyzes speech offline with WPM", () => {
-    const result = analyzeSpeechOffline(sample, 90);
+  it("analyzes frozen session without post-recording noise", () => {
+    const noisy =
+      sample + " you know offline Disney owns just she died mama moving chap";
+    const prepared = prepareTranscriptForAnalysis(noisy, 92);
+    const result = analyzeSpeechOffline(prepared, 92, {
+      pauseEvents: [10, 20, 95],
+      fillerTimeline: [
+        { second: 8, word: "um" },
+        { second: 100, word: "uh" },
+      ],
+    });
     expect(result).not.toBeNull();
-    expect(result!.wpm).toBeGreaterThan(0);
-    expect(result!.introDetected).toBe(true);
-    expect(result!.outroDetected).toBe(true);
-    expect(result!.fillerCount).toBeGreaterThanOrEqual(1);
-  });
-
-  it("estimates filler timeline from transcript", () => {
-    const timeline = estimateFillerTimeline("um hello like world", 40);
-    expect(timeline.length).toBe(2);
+    expect(result!.wordCount).toBeLessThan(50);
+    expect(result!.longPauseCount).toBe(2);
+    expect(result!.fillerTimeline.every((e) => e.second <= 92)).toBe(true);
+    expect(result!.sentenceCount).toBeGreaterThan(1);
   });
 });

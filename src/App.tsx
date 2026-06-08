@@ -65,9 +65,10 @@ export default function App() {
       checkedPoints: Record<number, boolean>;
       durationSeconds: number;
     }) => {
+      const snapshot = speech.finalizeSession();
       const rubric = {
         ...data.rubric,
-        fluencyFillerWords: speech.fillerCount <= 2,
+        fluencyFillerWords: snapshot.fillerCount <= 2,
       };
       setRubricAnswers(rubric);
       setLastRecordingDuration(data.durationSeconds);
@@ -78,15 +79,14 @@ export default function App() {
             rubric,
             data.checkedPoints,
             data.durationSeconds,
-            speech.transcript || undefined,
-            speech.fillerCount || undefined
+            snapshot.transcript || undefined,
+            snapshot.fillerCount || undefined
           )
         );
         setProgress((prev) => ({ ...prev, [activeMonologue.id]: updated }));
       }
-      speech.stopRecognition();
-      if (speech.transcript && activeMonologue) {
-        speech.analyzeWithAI(speech.transcript, activeMonologue.theme, activeMonologue.points);
+      if (snapshot.transcript && activeMonologue) {
+        speech.analyzeWithAI(snapshot.transcript, activeMonologue.theme, activeMonologue.points);
       }
       setPhase("RESULT");
     },
@@ -348,7 +348,7 @@ export default function App() {
             />
           )}
 
-          {phase === "RESULT" && activeMonologue && (
+          {phase === "RESULT" && activeMonologue && speech.sessionSnapshot && (
             <ResultPhase
               ST={ST}
               t={t}
@@ -358,11 +358,8 @@ export default function App() {
               rubricAnswers={rubricAnswers}
               setRubricAnswers={setRubricAnswers}
               topicProgress={getTopicProgress(activeMonologue.id)}
-              transcript={speech.transcript}
-              fillerCount={speech.fillerCount}
+              speechSnapshot={speech.sessionSnapshot}
               recordingDurationSeconds={lastRecordingDuration}
-              fillerTimeline={speech.fillerTimeline}
-              pauseEvents={speech.pauseEvents}
               aiFeedback={speech.aiFeedback}
               isAnalyzing={speech.isAnalyzing}
               onDownload={() =>

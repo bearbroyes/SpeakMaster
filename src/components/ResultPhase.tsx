@@ -16,10 +16,9 @@ import {
 import type { Monologue, RubricAnswers, TopicProgress } from "../types";
 import type { ThemeStyles } from "../themes";
 import type { TranslationKey } from "../i18n/translations";
-import { triggerDownload, shareRecording } from "../utils/download";
 import { buildRecordingFilename } from "../utils/filename";
 import { analyzeSpeechOffline } from "../utils/speechAnalysis";
-import type { FillerEvent } from "../utils/speechAnalysis";
+import type { SpeechSessionSnapshot } from "../hooks/useSpeechRecognition";
 import { SpeechAnalysisPanel } from "./SpeechAnalysisPanel";
 
 interface Props {
@@ -31,11 +30,8 @@ interface Props {
   rubricAnswers: RubricAnswers;
   setRubricAnswers: Dispatch<SetStateAction<RubricAnswers>>;
   topicProgress: TopicProgress | undefined;
-  transcript: string;
-  fillerCount: number;
+  speechSnapshot: SpeechSessionSnapshot;
   recordingDurationSeconds: number;
-  fillerTimeline: FillerEvent[];
-  pauseEvents: number[];
   aiFeedback: string | null;
   isAnalyzing: boolean;
   onDownload: () => void;
@@ -53,11 +49,8 @@ export function ResultPhase({
   rubricAnswers,
   setRubricAnswers,
   topicProgress,
-  transcript,
-  fillerCount,
+  speechSnapshot,
   recordingDurationSeconds,
-  fillerTimeline,
-  pauseEvents,
   aiFeedback,
   isAnalyzing,
   onDownload,
@@ -71,12 +64,15 @@ export function ResultPhase({
 
   const speechAnalysis = useMemo(
     () =>
-      analyzeSpeechOffline(transcript, recordingDurationSeconds, {
-        fillerTimeline,
-        pauseEvents,
+      analyzeSpeechOffline(speechSnapshot.transcript, recordingDurationSeconds, {
+        fillerTimeline: speechSnapshot.fillerTimeline,
+        pauseEvents: speechSnapshot.pauseEvents,
       }),
-    [transcript, recordingDurationSeconds, fillerTimeline, pauseEvents]
+    [speechSnapshot, recordingDurationSeconds]
   );
+
+  const displayTranscript = speechAnalysis?.cleanedTranscript ?? speechSnapshot.transcript;
+  const displayFillerCount = speechAnalysis?.fillerCount ?? speechSnapshot.fillerCount;
 
   const rubricItems: { key: keyof RubricAnswers; title: TranslationKey; desc: TranslationKey }[] = [
     { key: "coveredAllPoints", title: "rubric1Title", desc: "rubric1Desc" },
@@ -151,11 +147,11 @@ export function ResultPhase({
             </div>
           )}
 
-          {transcript && (
+          {displayTranscript && (
             <div className={`rounded-2xl p-4 border text-xs space-y-2 ${ST.aspectItem}`}>
               <h4 className={`font-bold ${ST.aspectLabel}`}>{t("transcript")}</h4>
-              <p className={`leading-relaxed ${ST.workflowSubtitle}`}>{transcript}</p>
-              <p className={`${ST.fillerText} font-mono`}>{t("fillerWords", { count: fillerCount })}</p>
+              <p className={`leading-relaxed ${ST.workflowSubtitle}`}>{displayTranscript}</p>
+              <p className={`${ST.fillerText} font-mono`}>{t("fillerWords", { count: displayFillerCount })}</p>
             </div>
           )}
 

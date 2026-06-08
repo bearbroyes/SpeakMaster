@@ -15,36 +15,26 @@ export interface SpeechAnalysis {
   avgSentenceLength: number;
   longPauseCount: number;
   estimatedGrammarIssues: number;
-  introDetected: boolean;
-  outroDetected: boolean;
   fillerCount: number;
   fillerTimeline: FillerEvent[];
   fillerBuckets: number[];
-  ogeWordBandOk: boolean;
-  ogeGrammarOk: boolean;
   wpmStatus: MetricStatus;
   wordCountStatus: MetricStatus;
+  cleanedTranscript: string;
 }
 
-const OGE_WORD_MIN = 100;
-const OGE_WORD_MAX = 180;
-const OGE_IDEAL_MIN = 120;
-const OGE_IDEAL_MAX = 130;
-const OGE_GRAMMAR_MAX = 2;
+const WORD_TARGET_MIN = 100;
+const WORD_TARGET_MAX = 180;
+const WORD_IDEAL_MIN = 120;
+const WORD_IDEAL_MAX = 130;
+const MAX_PLAUSIBLE_WPM = 200;
 const LONG_PAUSE_SEC = 3;
 const BUCKET_SIZE_SEC = 10;
 
-const INTRO_PATTERNS = [
-  /\bi\s+am\s+going\s+to\s+give\s+a\s+talk\b/i,
-  /\bi\s+would\s+like\s+to\s+talk\s+about\b/i,
-  /\btoday\s+i\s+want\s+to\s+talk\b/i,
-  /\blet\s+me\s+tell\s+you\s+about\b/i,
-];
-
-const OUTRO_PATTERNS = [
-  /\bthat\s+is\s+all\s+i\s+wanted\s+to\s+say\b/i,
-  /\bthank\s+you\s+for\s+listening\b/i,
-  /\bthat\s+is\s+all\b/i,
+const OUTRO_TRIM_PATTERNS = [
+  /\bthank\s+you\s+for\s+(listening|your\s+attention)\b/gi,
+  /\bthat\s+is\s+all\s+i\s+wanted\s+to\s+say\b/gi,
+  /\bthat\s+is\s+all\b/gi,
 ];
 
 const GRAMMAR_ERROR_PATTERNS: RegExp[] = [
@@ -57,13 +47,62 @@ const GRAMMAR_ERROR_PATTERNS: RegExp[] = [
   /\ba\s+informations\b/gi,
   /\bmany\s+much\b/gi,
   /\bdon't\s+has\b/gi,
-  /\bdoesn't\s+have\s+went\b/gi,
 ];
 
+const SENTENCE_BREAK_WORDS = new Set([
+  "and",
+  "but",
+  "so",
+  "then",
+  "also",
+  "moreover",
+  "furthermore",
+  "however",
+  "finally",
+  "firstly",
+  "secondly",
+  "additionally",
+]);
+
+/** Merge speech-recognition chunks without duplicating cumulative text. */
+export function appendFinalChunk(accumulated: string, chunk: string): string {
+  const c = chunk.trim();
+  if (!c) return accumulated.trim();
+  const a = accumulated.trim();
+  if (!a) return c;
+  if (c === a) return a;
+  if (c.startsWith(a)) return c;
+  if (a.startsWith(c)) return a;
+  if (a.includes(c)) return a;
+  return `${a} ${c}`;
+}
+
+export function mergeWithInterim(final: string, interim: string): string {
+  const f = final.trim();
+  const i = interim.trim();
+  if (!i) return f;
+  if (!f) return i;
+  if (i.startsWith(f)) return i;
+  if (f.includes(i)) return f;
+  return `${f} ${i}`;
+}
+
+/** Cut off recognition noise captured after the monologue outro. */
+export function trimTranscriptAtOutro(transcript: string): string {
+  let cutIndex = transcript.length;
+  for (const pattern of OUTRO_TRIM_PATTERNS) {
+    pattern.lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(transcript)) !== null) {
+      cutIndex = Math.min(cutIndex, match.index + match[0].length);
+    }
+  }
+  return transcript.slice(0, cutIndex).trim();
+}
+
 export function countWords(transcript: string): number {
-  const cleaned = transcript.trim();
-  if (!cleaned) return 0;
-  return cleaned.split(/\s+/).filter(Boolean).length;
+  const matches = transcript.match(/\b[a-zA-Z']+\b/g);
+  return matches ? matches.length : 0;
 }
 
 export function splitSentences(transcript: string): string[] {
@@ -73,26 +112,59 @@ export function splitSentences(transcript: string): string[] {
     .filter((s) => s.length > 0);
 }
 
-export function findFillersInText(text: string): FillerEvent[] {
-  const lower = text.toLowerCase();
-  const events: FillerEvent[] = [];
-  for (const phrase of FILLER_WORDS) {
-    const regex = new RegExp(`\\b${phrase.replace(/\s/g, "\\s+")}\\b`, "gi");
-    let match: RegExpExecArray | null;
-    while ((match = regex.exec(lower)) !== null) {
-      events.push({ second: 0, word: match[0].toLowerCase() });
+export function splitSentencesHeuristic(transcript: string): string[] {
+  const byPunctuation = splitSentences(transcript);
+  if (byPunctuation.length > 1) return byPunctuation;
+
+  const words = transcript.trim().split(/\s+/).filter(Boolean);
+  if (words.length <= 14) return words.length ? [words.join(" ")] : [];
+
+  const sentences: string[] = [];
+  let current: string[] = [];
+
+  for (const raw of words) {
+    current.push(raw);
+    const bare = raw.toLowerCase().replace(/[.,!?;:]/g, "");
+    const shouldBreak =
+      current.length >= 10 && (SENTENCE_BREAK_WORDS.has(bare) || current.length >= 18);
+
+    if (shouldBreak) {
+      sentences.push(current.join(" "));
+      current = [];
     }
   }
-  return events;
+
+  if (current.length) sentences.push(current.join(" "));
+  return sentences.length ? sentences : [transcript.trim()];
 }
 
-/** Map filler positions in transcript to approximate seconds by word index. */
+export function prepareTranscriptForAnalysis(transcript: string, durationSeconds: number): string {
+  let text = transcript.replace(/\s+/g, " ").trim();
+  text = trimTranscriptAtOutro(text);
+
+  const maxWords = Math.ceil((durationSeconds / 60) * MAX_PLAUSIBLE_WPM);
+  const words = text.match(/\b[a-zA-Z']+\b/g) ?? [];
+  if (words.length > maxWords) {
+    text = words.slice(0, maxWords).join(" ");
+  }
+
+  return text.trim();
+}
+
+export function filterEventsByDuration<T extends { second: number }>(
+  events: T[],
+  durationSeconds: number
+): T[] {
+  return events.filter((e) => e.second >= 0 && e.second <= durationSeconds);
+}
+
 export function estimateFillerTimeline(
   transcript: string,
   durationSeconds: number,
   liveTimeline: FillerEvent[] = []
 ): FillerEvent[] {
-  if (liveTimeline.length > 0) return liveTimeline;
+  const filtered = filterEventsByDuration(liveTimeline, durationSeconds);
+  if (filtered.length > 0) return filtered;
 
   const words = transcript.trim().split(/\s+/).filter(Boolean);
   if (words.length === 0 || durationSeconds <= 0) return [];
@@ -143,19 +215,7 @@ export function estimateGrammarIssues(transcript: string): number {
   const repeatedWord = lower.match(/\b(\w+)\s+\1\b/gi);
   if (repeatedWord) issues += repeatedWord.length;
 
-  const sentences = splitSentences(transcript);
-  const fragments = sentences.filter((s) => s.split(/\s+/).length < 3);
-  issues += Math.floor(fragments.length / 2);
-
   return issues;
-}
-
-export function detectIntro(transcript: string): boolean {
-  return INTRO_PATTERNS.some((p) => p.test(transcript));
-}
-
-export function detectOutro(transcript: string): boolean {
-  return OUTRO_PATTERNS.some((p) => p.test(transcript));
 }
 
 function statusForWpm(wpm: number): MetricStatus {
@@ -165,8 +225,8 @@ function statusForWpm(wpm: number): MetricStatus {
 }
 
 function statusForWordCount(count: number): MetricStatus {
-  if (count >= OGE_IDEAL_MIN && count <= OGE_IDEAL_MAX) return "good";
-  if (count >= OGE_WORD_MIN && count <= OGE_WORD_MAX) return "warn";
+  if (count >= WORD_IDEAL_MIN && count <= WORD_IDEAL_MAX) return "good";
+  if (count >= WORD_TARGET_MIN && count <= WORD_TARGET_MAX) return "warn";
   return "bad";
 }
 
@@ -178,23 +238,29 @@ export function analyzeSpeechOffline(
     pauseEvents?: number[];
   } = {}
 ): SpeechAnalysis | null {
-  const trimmed = transcript.trim();
-  if (!trimmed || durationSeconds <= 0) return null;
+  if (!transcript.trim() || durationSeconds <= 0) return null;
 
-  const wordCount = countWords(trimmed);
+  const cleanedTranscript = prepareTranscriptForAnalysis(transcript, durationSeconds);
+  if (!cleanedTranscript) return null;
+
+  const wordCount = countWords(cleanedTranscript);
   const speakingMinutes = durationSeconds / 60;
   const wpm = speakingMinutes > 0 ? Math.round(wordCount / speakingMinutes) : 0;
 
-  const sentences = splitSentences(trimmed);
+  const sentences = splitSentencesHeuristic(cleanedTranscript);
   const sentenceCount = Math.max(sentences.length, 1);
   const avgSentenceLength = Math.round((wordCount / sentenceCount) * 10) / 10;
 
-  const pauseEvents = options.pauseEvents ?? [];
+  const pauseEvents = filterEventsByDuration(
+    (options.pauseEvents ?? []).map((s) => ({ second: s })),
+    durationSeconds
+  ).map((e) => e.second);
+
   const longPauseCount = pauseEvents.length;
 
-  const estimatedGrammarIssues = estimateGrammarIssues(trimmed);
-  const fillerCount = countFillerWords(trimmed);
-  const fillerTimeline = estimateFillerTimeline(trimmed, durationSeconds, options.fillerTimeline);
+  const estimatedGrammarIssues = estimateGrammarIssues(cleanedTranscript);
+  const fillerCount = countFillerWords(cleanedTranscript);
+  const fillerTimeline = estimateFillerTimeline(cleanedTranscript, durationSeconds, options.fillerTimeline);
   const fillerBuckets = buildFillerBuckets(fillerTimeline, durationSeconds);
 
   return {
@@ -203,16 +269,13 @@ export function analyzeSpeechOffline(
     speakingDurationSeconds: durationSeconds,
     sentenceCount,
     avgSentenceLength,
-    longPauseCount: pauseEvents.length > 0 ? pauseEvents.length : longPauseCount,
+    longPauseCount,
     estimatedGrammarIssues,
-    introDetected: detectIntro(trimmed),
-    outroDetected: detectOutro(trimmed),
     fillerCount,
     fillerTimeline,
     fillerBuckets,
-    ogeWordBandOk: wordCount >= OGE_WORD_MIN && wordCount <= OGE_WORD_MAX,
-    ogeGrammarOk: estimatedGrammarIssues <= OGE_GRAMMAR_MAX,
     wpmStatus: statusForWpm(wpm),
     wordCountStatus: statusForWordCount(wordCount),
+    cleanedTranscript,
   };
 }
