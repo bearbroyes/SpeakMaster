@@ -1,5 +1,9 @@
 /// <reference types="vite/client" />
 
+interface Window {
+  __APP_READY__?: boolean;
+}
+
 interface ImportMetaEnv {
   readonly VITE_CLASS_CODE: string;
   readonly VITE_GEMINI_API_KEY: string;

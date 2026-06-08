@@ -1,6 +1,22 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function (regs) {
+          regs.forEach(function (r) {
+            r.unregister();
+          });
+        });
+        if (window.caches) {
+          caches.keys().then(function (keys) {
+            keys.forEach(function (key) {
+              caches.delete(key);
+            });
+          });
+        }
+      }
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SpeakMasterPro - Rehearsal Deck</title>
@@ -206,11 +222,7 @@
     </div>
 
     <!-- React App Root Container -->
-    <div id="root" class="gatekeeper-hidden">
-      <p id="app-loading" style="text-align:center;padding:3rem 1.5rem;color:#94a3b8;font-size:0.95rem;">
-        Загрузка приложения…
-      </p>
-    </div>
+    <div id="root" class="gatekeeper-hidden"></div>
     <script type="module" src="/src/main.tsx"></script>
 
     <script>
@@ -236,6 +248,7 @@
       }
 
       function bypassLockScreen() {
+        if (!window.__APP_READY__) return;
         overlay.style.opacity = "0";
         overlay.style.visibility = "hidden";
         rootContainer.classList.remove("gatekeeper-hidden");
@@ -243,8 +256,31 @@
         setTimeout(() => overlay.remove(), 500);
       }
 
+      function showBootFailure() {
+        const card = document.getElementById("gatekeeper_card");
+        if (!card || card.querySelector("#boot_error_msg")) return;
+        const msg = document.createElement("p");
+        msg.id = "boot_error_msg";
+        msg.style.cssText =
+          "margin-top:1rem;padding:0.75rem;border-radius:12px;background:rgba(248,113,113,0.15);color:#fca5a5;font-size:0.8rem;line-height:1.4;";
+        msg.textContent =
+          "Не удалось загрузить приложение. Нажмите Ctrl+F5 (жёсткое обновление) или откройте сайт в режиме инкогнито.";
+        card.appendChild(msg);
+      }
+
+      function requestUnlock() {
+        if (window.__APP_READY__) {
+          bypassLockScreen();
+          return;
+        }
+        document.addEventListener("speakmaster:ready", bypassLockScreen, { once: true });
+        setTimeout(() => {
+          if (!window.__APP_READY__) showBootFailure();
+        }, 12000);
+      }
+
       if (sessionStorage.getItem(SESSION_KEY) === "ok") {
-        bypassLockScreen();
+        requestUnlock();
       }
 
       function handleAuthentication() {
@@ -253,7 +289,7 @@
           if (rememberCheckbox && rememberCheckbox.checked) {
             sessionStorage.setItem(SESSION_KEY, "ok");
           }
-          bypassLockScreen();
+          requestUnlock();
         } else {
           errorLabel.classList.add("visible");
           input.style.borderColor = "#f87171";

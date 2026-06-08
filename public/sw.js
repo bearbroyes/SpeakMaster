@@ -1,23 +1,38 @@
-const CACHE = "speakmaster-v1";
-const ASSETS = ["/SpeakMaster/", "/SpeakMaster/index.html"];
+const CACHE = "speakmaster-v3";
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS)));
+self.addEventListener("install", () => {
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-    )
+    caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key)))).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
-  event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
-  );
+
+  const url = new URL(event.request.url);
+  const isAppShell =
+    event.request.mode === "navigate" ||
+    url.pathname.endsWith("/SpeakMaster/") ||
+    url.pathname.endsWith("/SpeakMaster/index.html");
+
+  if (isAppShell) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  if (url.pathname.includes("/SpeakMaster/assets/")) {
+    event.respondWith(
+      caches.open(CACHE).then(async (cache) => {
+        const cached = await cache.match(event.request);
+        if (cached) return cached;
+        const response = await fetch(event.request);
+        if (response.ok) cache.put(event.request, response.clone());
+        return response;
+      })
+    );
+  }
 });
