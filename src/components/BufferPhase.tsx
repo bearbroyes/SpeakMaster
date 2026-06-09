@@ -15,7 +15,7 @@ export function BufferPhase({ ST, t, bufferTimeLeft }: Props) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 1.05 }}
-      className={`max-w-md mx-auto w-full p-10 text-center space-y-8 shadow-2xl border rounded-[36px] ${ST.workflowCard}`}
+      className={`gradient-border-wrap max-w-md mx-auto w-full p-10 text-center space-y-8 shadow-2xl border rounded-[36px] card-shine ${ST.workflowCard}`}
       id="get_ready_modal"
       role="status"
       aria-live="polite"

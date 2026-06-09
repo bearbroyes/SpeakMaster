@@ -120,7 +120,7 @@ export function RecordingPhase({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className={`max-w-4xl mx-auto w-full border rounded-[32px] shadow-2xl overflow-hidden ${ST.workflowCard}`}
+        className={`gradient-border-wrap max-w-4xl mx-auto w-full border rounded-[32px] shadow-2xl overflow-hidden card-shine ${ST.workflowCard}`}
         id="active_recording_canvas"
       >
         <div className="grid grid-cols-1 md:grid-cols-12 gap-0">

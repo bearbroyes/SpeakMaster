@@ -14,13 +14,13 @@ const sharedExtras = {
       "bg-white/5 hover:bg-white/10 active:scale-[0.98] text-slate-300 border border-white/15 transition-all",
     footer: "border-white/10 text-slate-500 bg-transparent",
     primaryButton:
-      "bg-indigo-500 hover:bg-indigo-400 active:scale-[0.98] text-white shadow-lg shadow-indigo-500/30 transition-all",
+      "btn-glow bg-indigo-500 hover:bg-indigo-400 active:scale-[0.98] text-white shadow-lg shadow-indigo-500/30 transition-all",
     primaryButtonSm:
       "bg-indigo-500 hover:bg-indigo-400 active:scale-[0.98] text-white shadow-md shadow-indigo-500/20 transition-all",
     accentButton:
-      "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.98] text-white shadow-lg shadow-amber-500/25 transition-all",
+      "btn-glow bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.98] text-white shadow-lg shadow-amber-500/25 transition-all",
     dangerButton:
-      "bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 active:scale-[0.98] text-white shadow-lg shadow-red-900/35 transition-all",
+      "btn-glow bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 active:scale-[0.98] text-white shadow-lg shadow-red-900/35 transition-all",
     surpriseButton:
       "bg-gradient-to-r from-amber-500 via-fuchsia-500 to-indigo-600 hover:brightness-110 active:scale-[0.98] text-white shadow-lg shadow-indigo-500/20 border border-white/10 transition-all",
     successBadge: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30",
@@ -65,13 +65,13 @@ const sharedExtras = {
       "bg-slate-950/40 hover:bg-slate-900 active:scale-[0.98] text-slate-300 border border-slate-700 transition-all",
     footer: "border-slate-800 text-slate-500 bg-transparent",
     primaryButton:
-      "bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white shadow-lg shadow-indigo-600/25 transition-all",
+      "btn-glow bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white shadow-lg shadow-indigo-600/25 transition-all",
     primaryButtonSm:
       "bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white shadow-md shadow-indigo-600/20 transition-all",
     accentButton:
-      "bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 active:scale-[0.98] text-white shadow-lg shadow-amber-600/20 transition-all",
+      "btn-glow bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 active:scale-[0.98] text-white shadow-lg shadow-amber-600/20 transition-all",
     dangerButton:
-      "bg-gradient-to-r from-red-700 to-rose-700 hover:from-red-600 hover:to-rose-600 active:scale-[0.98] text-white shadow-lg shadow-red-950/40 transition-all",
+      "btn-glow bg-gradient-to-r from-red-700 to-rose-700 hover:from-red-600 hover:to-rose-600 active:scale-[0.98] text-white shadow-lg shadow-red-950/40 transition-all",
     surpriseButton:
       "bg-gradient-to-r from-amber-600 via-fuchsia-600 to-indigo-700 hover:brightness-110 active:scale-[0.98] text-white shadow-lg shadow-indigo-900/30 border border-slate-700 transition-all",
     successBadge: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25",
@@ -116,13 +116,13 @@ const sharedExtras = {
       "bg-slate-100 hover:bg-slate-200 active:scale-[0.98] text-slate-700 border border-slate-200 transition-all",
     footer: "border-slate-200 text-slate-500 bg-white/50",
     primaryButton:
-      "bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white shadow-md shadow-indigo-600/25 transition-all",
+      "btn-glow bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white shadow-md shadow-indigo-600/25 transition-all",
     primaryButtonSm:
       "bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white shadow-sm shadow-indigo-600/15 transition-all",
     accentButton:
-      "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-[0.98] text-white shadow-md shadow-amber-500/20 transition-all",
+      "btn-glow bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-[0.98] text-white shadow-md shadow-amber-500/20 transition-all",
     dangerButton:
-      "bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 active:scale-[0.98] text-white shadow-md shadow-red-200 transition-all",
+      "btn-glow bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 active:scale-[0.98] text-white shadow-md shadow-red-200 transition-all",
     surpriseButton:
       "bg-gradient-to-r from-amber-500 via-fuchsia-500 to-indigo-600 hover:brightness-105 active:scale-[0.98] text-white shadow-md border border-indigo-200/50 transition-all",
     successBadge: "bg-emerald-50 text-emerald-800 border border-emerald-200",
@@ -163,13 +163,13 @@ export const THEME_STYLES: Record<Theme, ThemeStyles> = {
   violet: {
     rootBg: "bg-[#0f172a] text-slate-100",
     rootBgStyle: "",
-    headerBg: "bg-white/5 border-white/10 backdrop-blur-md",
+    headerBg: "bg-white/[0.07] border-white/10",
     headerTitle: "text-white",
     headerSubtitle: "text-slate-400",
     sessionText: "text-slate-400",
     sessionTopic: "text-indigo-300",
     divider: "bg-white/10",
-    banner: "bg-white/5 border border-white/10 backdrop-blur-xl",
+    banner: "glass-premium bg-white/[0.06] border border-white/15 shadow-2xl shadow-indigo-950/40",
     bannerTitle: "text-white",
     bannerDesc: "text-slate-300",
     bannerStep: "bg-white/5 border border-white/5 text-slate-300",
@@ -179,7 +179,7 @@ export const THEME_STYLES: Record<Theme, ThemeStyles> = {
     themePillLabel: "text-slate-400",
     pillActive: "bg-indigo-500 border-indigo-400 text-white shadow-md shadow-indigo-500/20",
     pillInactive: "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20",
-    card: "bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-slate-100",
+    card: "glass-card bg-white/[0.06] border border-white/12 hover:bg-white/10 hover:border-indigo-400/30 text-slate-100",
     cardTag: "bg-indigo-500/20 text-indigo-300",
     cardFormat: "border border-white/10 bg-white/5 text-slate-400",
     cardTitle: "text-white group-hover:text-indigo-300",
@@ -188,7 +188,7 @@ export const THEME_STYLES: Record<Theme, ThemeStyles> = {
     cardLabel: "text-slate-400",
     cardBulletText: "text-slate-300",
     cardFooter: "border-white/5 text-indigo-400 group-hover:text-indigo-300",
-    workflowCard: "bg-white/10 backdrop-blur-2xl border border-white/20 text-slate-100",
+    workflowCard: "glass-premium bg-white/[0.08] border border-white/20 shadow-2xl shadow-black/20 text-slate-100",
     workflowHeading: "text-white",
     workflowSubtitle: "text-slate-400",
     aspectLabel: "text-indigo-300",
@@ -260,13 +260,13 @@ export const THEME_STYLES: Record<Theme, ThemeStyles> = {
   dark: {
     rootBg: "bg-[#090d16] text-slate-200",
     rootBgStyle: "",
-    headerBg: "bg-slate-950/50 border-slate-800 backdrop-blur-md",
+    headerBg: "bg-slate-950/60 border-slate-800",
     headerTitle: "text-slate-100",
     headerSubtitle: "text-slate-500",
     sessionText: "text-slate-500",
     sessionTopic: "text-indigo-400",
     divider: "bg-slate-800",
-    banner: "bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl",
+    banner: "glass-premium bg-slate-900/50 border border-slate-700/80 shadow-2xl shadow-black/40",
     bannerTitle: "text-slate-100",
     bannerDesc: "text-slate-400",
     bannerStep: "bg-slate-950/40 border border-slate-900 text-slate-400",
@@ -276,7 +276,7 @@ export const THEME_STYLES: Record<Theme, ThemeStyles> = {
     themePillLabel: "text-slate-500",
     pillActive: "bg-indigo-600 border-indigo-500 text-white shadow-md shadow-indigo-600/20",
     pillInactive: "bg-slate-950/40 border-slate-800 text-slate-400 hover:bg-slate-950/60 hover:border-slate-700",
-    card: "bg-slate-900/60 border border-slate-800/80 hover:bg-slate-900 hover:border-slate-700 text-slate-200",
+    card: "glass-card bg-slate-900/65 border border-slate-700/80 hover:bg-slate-900 hover:border-indigo-500/35 text-slate-200",
     cardTag: "bg-indigo-500/10 text-indigo-400",
     cardFormat: "border border-slate-800/50 bg-slate-950/30 text-slate-400",
     cardTitle: "text-slate-100 group-hover:text-indigo-300",
@@ -285,7 +285,7 @@ export const THEME_STYLES: Record<Theme, ThemeStyles> = {
     cardLabel: "text-slate-500",
     cardBulletText: "text-slate-400",
     cardFooter: "border-slate-800 text-indigo-400 group-hover:text-indigo-300",
-    workflowCard: "bg-slate-900/80 backdrop-blur-2xl border border-slate-800 text-slate-200",
+    workflowCard: "glass-premium bg-slate-900/75 border border-slate-700/80 shadow-2xl shadow-black/30 text-slate-200",
     workflowHeading: "text-slate-100",
     workflowSubtitle: "text-slate-500",
     aspectLabel: "text-indigo-400",
@@ -357,13 +357,13 @@ export const THEME_STYLES: Record<Theme, ThemeStyles> = {
   light: {
     rootBg: "bg-[#f8fafc] text-slate-800",
     rootBgStyle: "",
-    headerBg: "bg-white/70 border-slate-200/80 backdrop-blur-md shadow-xs",
+    headerBg: "bg-white/75 border-slate-200/90",
     headerTitle: "text-slate-900",
     headerSubtitle: "text-slate-500",
     sessionText: "text-slate-500",
     sessionTopic: "text-indigo-600 font-semibold",
     divider: "bg-slate-200",
-    banner: "bg-white border border-slate-200 shadow-xs",
+    banner: "glass-premium bg-white/85 border border-slate-200/90 shadow-xl shadow-indigo-100/50",
     bannerTitle: "text-slate-900",
     bannerDesc: "text-slate-600",
     bannerStep: "bg-slate-50 border border-slate-100 text-slate-600",
@@ -373,7 +373,7 @@ export const THEME_STYLES: Record<Theme, ThemeStyles> = {
     themePillLabel: "text-slate-500",
     pillActive: "bg-indigo-600 border-indigo-500 text-white shadow-xs",
     pillInactive: "bg-slate-100 border-slate-200 text-slate-600 hover:bg-slate-200 hover:border-slate-300",
-    card: "bg-white border border-slate-200 shadow-xs hover:bg-slate-50/70 hover:border-slate-300 hover:shadow-xs text-slate-800",
+    card: "glass-card bg-white/90 border border-slate-200 hover:bg-white hover:border-indigo-300/60 hover:shadow-lg text-slate-800",
     cardTag: "bg-indigo-50 text-indigo-700 font-bold",
     cardFormat: "border border-slate-200 bg-slate-100 text-slate-600",
     cardTitle: "text-slate-900 group-hover:text-indigo-600",
@@ -382,7 +382,7 @@ export const THEME_STYLES: Record<Theme, ThemeStyles> = {
     cardLabel: "text-slate-500",
     cardBulletText: "text-slate-600",
     cardFooter: "border-slate-100 text-indigo-600 group-hover:text-indigo-700",
-    workflowCard: "bg-white border border-slate-200 shadow-md text-slate-800",
+    workflowCard: "glass-premium bg-white/92 border border-slate-200 shadow-xl shadow-slate-200/60 text-slate-800",
     workflowHeading: "text-slate-900",
     workflowSubtitle: "text-slate-500",
     aspectLabel: "text-indigo-600",
@@ -456,14 +456,14 @@ export const THEME_STYLES: Record<Theme, ThemeStyles> = {
 export const ROOT_BG_STYLES: Record<Theme, CSSProperties> = {
   violet: {
     backgroundImage:
-      "radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.45) 0px, transparent 55%), radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.25) 0px, transparent 45%), radial-gradient(at 100% 100%, rgba(192, 38, 211, 0.35) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.2) 0px, transparent 45%)",
+      "radial-gradient(ellipse 120% 80% at 50% -20%, rgba(99, 102, 241, 0.35) 0%, transparent 50%), radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.28) 0px, transparent 45%), radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.22) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(192, 38, 211, 0.2) 0px, transparent 45%)",
   },
   dark: {
     backgroundImage:
-      "radial-gradient(at 0% 0%, rgba(51, 65, 85, 0.45) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.5) 0px, transparent 55%), radial-gradient(at 50% 0%, rgba(79, 70, 229, 0.12) 0px, transparent 40%)",
+      "radial-gradient(ellipse 100% 60% at 50% 0%, rgba(79, 70, 229, 0.15) 0%, transparent 55%), radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.6) 0px, transparent 55%), radial-gradient(at 0% 50%, rgba(51, 65, 85, 0.35) 0px, transparent 50%)",
   },
   light: {
     backgroundImage:
-      "radial-gradient(at 0% 0%, rgba(199, 210, 254, 0.45) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(241, 245, 249, 0.8) 0px, transparent 55%), radial-gradient(at 100% 0%, rgba(254, 243, 199, 0.35) 0px, transparent 40%)",
+      "radial-gradient(ellipse 100% 70% at 50% -10%, rgba(199, 210, 254, 0.7) 0%, transparent 55%), radial-gradient(at 100% 100%, rgba(255, 255, 255, 0.9) 0px, transparent 50%), radial-gradient(at 0% 80%, rgba(254, 243, 199, 0.4) 0px, transparent 45%)",
   },
 };

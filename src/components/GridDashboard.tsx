@@ -72,21 +72,38 @@ export function GridDashboard({
       className="space-y-8"
       id="dashboard_grid_container"
     >
-      <div id="frosted_hero_banner" className={`relative overflow-hidden rounded-[32px] p-8 sm:p-10 shadow-xl transition-all duration-300 card-shine ${ST.banner}`}>
-        <div className={`absolute top-0 right-0 h-40 w-40 blur-3xl rounded-full hero-orb ${ST.heroGlow}`} />
-        <div className={`absolute bottom-0 left-0 h-32 w-32 blur-3xl rounded-full hero-orb-delayed ${ST.heroGlow} opacity-60`} />
-        <div className="relative z-10 max-w-4xl space-y-4">
-          <div className={`inline-flex items-center gap-2 px-3 py-1 border text-xs font-semibold rounded-full ${ST.bannerStep}`}>
+      <div
+        id="frosted_hero_banner"
+        className={`gradient-border-wrap relative overflow-hidden rounded-[32px] p-8 sm:p-10 transition-all duration-500 card-shine ${ST.banner}`}
+      >
+        <div className={`absolute top-0 right-0 h-48 w-48 blur-3xl rounded-full hero-orb ${ST.heroGlow}`} />
+        <div className={`absolute bottom-0 left-0 h-36 w-36 blur-3xl rounded-full hero-orb-delayed ${ST.heroGlow} opacity-60`} />
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-fuchsia-500/5 pointer-events-none" />
+        <div className="relative z-10 max-w-4xl space-y-5">
+          <div
+            className={`hero-badge-pulse inline-flex items-center gap-2 px-3 py-1.5 border text-xs font-semibold rounded-full ${ST.bannerStep}`}
+          >
             <Sparkles className={`h-3.5 w-3.5 ${ST.iconAccent}`} />
             <span>State Exam Preparation Module</span>
           </div>
-          <h2 className={`text-3xl sm:text-5xl font-black tracking-tight leading-none ${ST.bannerTitle}`}>
-            {t("selectTopic")}
+          <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-[1.05]">
+            <span className="gradient-text">{t("selectTopic")}</span>
           </h2>
           <p className={`text-sm sm:text-base leading-relaxed max-w-3xl ${ST.bannerDesc}`}>{t("heroDesc")}</p>
-          <p className={`text-xs font-mono ${ST.workflowSubtitle}`}>
-            {t("progressCount", { done, total: MONOLOGUES.length })}
-          </p>
+          <div className="space-y-2 max-w-md">
+            <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider">
+              <span className={ST.workflowSubtitle}>{t("progressCount", { done, total: MONOLOGUES.length })}</span>
+              <span className={ST.heroStepNum}>{Math.round((done / MONOLOGUES.length) * 100)}%</span>
+            </div>
+            <div className="progress-track">
+              <motion.div
+                className="progress-fill"
+                initial={{ width: 0 }}
+                animate={{ width: `${(done / MONOLOGUES.length) * 100}%` }}
+                transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </div>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
             {[
               { n: "01", l: t("stepChoose") },
@@ -96,7 +113,7 @@ export function GridDashboard({
             ].map((s, i) => (
               <div
                 key={s.n}
-                className={`${ST.bannerStep} rounded-2xl p-4 text-center border stagger-fade`}
+                className={`step-card ${ST.bannerStep} rounded-2xl p-4 text-center border stagger-fade`}
                 style={{ animationDelay: `${i * 80}ms` }}
               >
                 <span className={`block font-mono text-xl font-bold ${ST.heroStepNum}`}>{s.n}</span>
@@ -107,7 +124,7 @@ export function GridDashboard({
         </div>
       </div>
 
-      <div className={`flex flex-wrap items-center gap-3 p-4 rounded-2xl border ${ST.filterConsole}`}>
+      <div className={`glass-premium flex flex-wrap items-center gap-3 p-4 rounded-2xl border ${ST.filterConsole}`}>
         <button
           onClick={() => setPracticeMode("training")}
           className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
@@ -163,7 +180,7 @@ export function GridDashboard({
             <button
               id="surprise_me_btn"
               onClick={onSurpriseMe}
-              className={`flex items-center gap-2 font-bold px-5 py-2.5 rounded-xl cursor-pointer text-sm ${ST.surpriseButton}`}
+              className={`btn-glow flex items-center gap-2 font-bold px-5 py-2.5 rounded-xl cursor-pointer text-sm ${ST.surpriseButton}`}
             >
               <Star className="h-4 w-4 fill-amber-300 text-amber-200" />
               <span>{t("surpriseMe")}</span>
@@ -216,7 +233,7 @@ export function GridDashboard({
               key={item.id}
               id={`monologue_tile_${item.id}`}
               onClick={() => onSelect(item)}
-              className={`group card-shine ${ST.card} rounded-2xl p-6 flex flex-col justify-between shadow-lg transition-all cursor-pointer relative overflow-hidden`}
+              className={`group gradient-border-wrap glass-card card-shine ${ST.card} rounded-2xl p-6 flex flex-col justify-between shadow-lg cursor-pointer relative overflow-hidden`}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => e.key === "Enter" && onSelect(item)}
@@ -255,7 +272,7 @@ export function GridDashboard({
               </div>
               <div className={`mt-4 pt-3 border-t flex items-center justify-between text-xs font-bold ${ST.cardFooter} ${ST.cardDivider}`}>
                 <span>{t("beginTest")}</span>
-                <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                <ChevronRight className="h-4 w-4 group-hover:translate-x-1.5 transition-transform duration-300" />
               </div>
             </motion.div>
           );

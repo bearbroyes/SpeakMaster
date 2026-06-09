@@ -20,6 +20,7 @@ import { PreparationPhase } from "./components/PreparationPhase";
 import { BufferPhase } from "./components/BufferPhase";
 import { RecordingPhase } from "./components/RecordingPhase";
 import { ResultPhase } from "./components/ResultPhase";
+import { AmbientBackground } from "./components/AmbientBackground";
 import {
   loadAllProgress,
   recordAttempt,
@@ -264,9 +265,10 @@ export default function App() {
   return (
     <div
       id="app_root"
-      className={`min-h-screen mesh-bg-animated ${ST.rootBg} ${ST.selectionAccent} font-sans antialiased flex flex-col transition-colors duration-500`}
+      className={`theme-${theme} min-h-screen mesh-bg-animated ${ST.rootBg} ${ST.selectionAccent} font-sans antialiased flex flex-col transition-colors duration-500 relative`}
       style={ROOT_BG_STYLES[theme]}
     >
+      <AmbientBackground theme={theme} />
       <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden" aria-hidden="true">
         <AnimatePresence>
           {particles.map((p) => (
@@ -373,7 +375,7 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      <footer className={`h-14 flex items-center justify-center px-4 border-t text-[9px] uppercase tracking-widest mt-8 ${ST.footer}`}>
+      <footer className={`relative z-10 h-14 flex items-center justify-center px-4 border-t text-[9px] uppercase tracking-widest mt-8 footer-glow ${ST.footer}`}>
         <span>{t("footer")}</span>
       </footer>
     </div>

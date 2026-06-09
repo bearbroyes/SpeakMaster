@@ -91,13 +91,17 @@ export function ResultPhase({
       className="max-w-4xl mx-auto w-full space-y-8"
       id="speech_results_workspace"
     >
-      <div className={`backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-2xl border flex flex-col md:flex-row md:items-center justify-between gap-6 ${ST.banner}`}>
+      <div
+        className={`gradient-border-wrap card-shine rounded-3xl p-6 sm:p-10 shadow-2xl border flex flex-col md:flex-row md:items-center justify-between gap-6 ${ST.banner}`}
+      >
         <div className="space-y-3 max-w-xl">
           <div className={`inline-flex items-center gap-1.5 text-xs font-bold py-1 px-3 rounded-full border ${ST.successBadge}`}>
             <CheckCircle className="h-3.5 w-3.5" />
             <span>{t("completed")}</span>
           </div>
-          <h2 className={`text-2xl sm:text-3xl font-extrabold capitalize ${ST.bannerTitle}`}>{t("completed")}</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold capitalize">
+            <span className="gradient-text">{t("completed")}</span>
+          </h2>
           <p className={`text-sm ${ST.bannerDesc}`}>{t("completedDesc", { theme: monologue.theme })}</p>
         </div>
 
@@ -129,7 +133,7 @@ export function ResultPhase({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-        <div className={`md:col-span-5 rounded-3xl p-6 sm:p-8 shadow-xl border space-y-6 ${ST.workflowCard}`}>
+        <div className={`gradient-border-wrap md:col-span-5 rounded-3xl p-6 sm:p-8 shadow-xl border space-y-6 card-shine ${ST.workflowCard}`}>
           <div className={`flex items-center gap-2 border-b pb-4 ${ST.cardDivider}`}>
             <Volume2 className={`h-5 w-5 ${ST.iconAccent}`} />
             <h3 className={`font-bold ${ST.workflowHeading}`}>{t("listenEvaluate")}</h3>
@@ -196,7 +200,7 @@ export function ResultPhase({
           </div>
         </div>
 
-        <div className={`md:col-span-7 rounded-3xl p-6 sm:p-8 shadow-xl border space-y-6 ${ST.workflowCard}`}>
+        <div className={`gradient-border-wrap md:col-span-7 rounded-3xl p-6 sm:p-8 shadow-xl border space-y-6 card-shine ${ST.workflowCard}`}>
           <h3 className={`font-bold border-b pb-4 ${ST.cardDivider} ${ST.workflowHeading}`}>{t("rubricTitle")}</h3>
           <p className={`text-sm ${ST.workflowSubtitle}`}>{t("rubricDesc")}</p>
 
