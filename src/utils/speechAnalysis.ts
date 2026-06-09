@@ -94,6 +94,33 @@ export function mergeWithInterim(final: string, interim: string): string {
   return `${f} ${i}`;
 }
 
+/** Remove consecutive duplicate blocks produced when speech recognition restarts. */
+export function collapseDuplicateTail(transcript: string): string {
+  let words = transcript.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 8) return transcript.trim();
+
+  let changed = true;
+  while (changed && words.length >= 8) {
+    changed = false;
+    const maxLen = Math.min(48, Math.floor(words.length / 2));
+
+    for (let len = maxLen; len >= 4; len--) {
+      for (let i = 0; i <= words.length - len * 2; i++) {
+        const block = words.slice(i, i + len).join(" ").toLowerCase();
+        const next = words.slice(i + len, i + len * 2).join(" ").toLowerCase();
+        if (block === next) {
+          words = [...words.slice(0, i + len), ...words.slice(i + len * 2)];
+          changed = true;
+          break;
+        }
+      }
+      if (changed) break;
+    }
+  }
+
+  return words.join(" ");
+}
+
 /** Cut off recognition noise captured after the monologue outro. */
 export function trimTranscriptAtOutro(transcript: string): string {
   let cutIndex = transcript.length;
@@ -147,6 +174,7 @@ export function splitSentencesHeuristic(transcript: string): string[] {
 
 export function prepareTranscriptForAnalysis(transcript: string, durationSeconds: number): string {
   let text = transcript.replace(/\s+/g, " ").trim();
+  text = collapseDuplicateTail(text);
   text = trimTranscriptAtOutro(text);
 
   const maxWords = Math.ceil((durationSeconds / 60) * MAX_PLAUSIBLE_WPM);

@@ -24,10 +24,10 @@ function buildPrompt(transcript: string, theme: string, points: string[]): strin
 The student was required to cover these aspects:
 ${points.map((p, i) => `${i + 1}. ${p}`).join("\n")}
 
-Transcript:
+Speech-to-text transcript (may contain minor recognition errors — focus on content, not typos):
 "${transcript.slice(0, 6000)}"
 
-Give brief constructive feedback in Russian (3-5 sentences): which aspects seem covered, any grammar issues, and one tip for improvement. Do not give a numeric score.`;
+Give brief constructive feedback in Russian (3-5 sentences): which aspects seem covered, notable grammar issues, and one practical tip. Base your answer only on the transcript above. Do not invent facts. Do not give a numeric score.`;
 }
 
 function parseApiError(status: number, body: string): GeminiError {

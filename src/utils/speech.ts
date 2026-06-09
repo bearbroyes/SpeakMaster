@@ -1,4 +1,5 @@
-export const FILLER_WORDS = ["um", "uh", "like", "you know", "well", "so", "actually", "basically"];
+/** High-confidence hesitation markers — avoids flagging normal words like "so/well/actually". */
+export const FILLER_WORDS = ["um", "uh", "er", "erm", "hmm", "like", "you know", "i mean", "sort of", "kind of"];
 
 export function findFillersInChunk(chunk: string): string[] {
   const found: string[] = [];

@@ -5,6 +5,7 @@ import {
   appendFinalChunk,
   mergeWithInterim,
   filterEventsByDuration,
+  prepareTranscriptForAnalysis,
 } from "../utils/speechAnalysis";
 import { analyzeTranscript, GeminiError, isGeminiConfigured } from "../utils/gemini";
 
@@ -30,16 +31,17 @@ export function useSpeechRecognition() {
   const acceptingRef = useRef(true);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const finalTextRef = useRef("");
+  const interimTextRef = useRef("");
   const lastFinalAtRef = useRef(0);
   const timelineRef = useRef<FillerEvent[]>([]);
   const pausesRef = useRef<number[]>([]);
   const getElapsedRef = useRef<(() => number) | undefined>(undefined);
   const maxDurationRef = useRef(120);
 
-  const syncFromRefs = useCallback(() => {
-    const combined = finalTextRef.current.trim();
-    setTranscript(combined);
-    setFillerCount(countFillerWords(combined));
+  const syncLiveDisplay = useCallback(() => {
+    const display = mergeWithInterim(finalTextRef.current, interimTextRef.current).trim();
+    setTranscript(display);
+    setFillerCount(countFillerWords(display));
     setFillerTimeline([...timelineRef.current]);
     setPauseEvents([...pausesRef.current]);
   }, []);
@@ -59,6 +61,7 @@ export function useSpeechRecognition() {
       recognition.lang = "en-US";
 
       finalTextRef.current = "";
+      interimTextRef.current = "";
       lastFinalAtRef.current = Date.now();
       timelineRef.current = [];
       pausesRef.current = [];
@@ -95,9 +98,8 @@ export function useSpeechRecognition() {
           }
         }
 
-        const combined = mergeWithInterim(finalTextRef.current, interim).trim();
-        if (combined) finalTextRef.current = combined;
-        syncFromRefs();
+        interimTextRef.current = interim.trim();
+        syncLiveDisplay();
       };
 
       recognition.onerror = () => {
@@ -114,11 +116,12 @@ export function useSpeechRecognition() {
       setFillerCount(0);
       return true;
     },
-    [syncFromRefs]
+    [syncLiveDisplay]
   );
 
-  const finalizeSession = useCallback((): SpeechSessionSnapshot => {
+  const finalizeSession = useCallback((durationSeconds?: number): SpeechSessionSnapshot => {
     acceptingRef.current = false;
+    interimTextRef.current = "";
 
     const recognition = recognitionRef.current;
     if (recognition) {
@@ -139,10 +142,19 @@ export function useSpeechRecognition() {
 
     setIsListening(false);
 
-    const duration = maxDurationRef.current;
+    const duration =
+      durationSeconds != null && durationSeconds > 0
+        ? Math.round(durationSeconds)
+        : Math.min(
+            Math.max(1, Math.round(getElapsedRef.current?.() ?? maxDurationRef.current)),
+            maxDurationRef.current
+          );
+
+    const cleanedTranscript = prepareTranscriptForAnalysis(finalTextRef.current.trim(), duration);
+
     const snapshot: SpeechSessionSnapshot = {
-      transcript: finalTextRef.current.trim(),
-      fillerCount: countFillerWords(finalTextRef.current),
+      transcript: cleanedTranscript,
+      fillerCount: countFillerWords(cleanedTranscript),
       fillerTimeline: filterEventsByDuration(timelineRef.current, duration),
       pauseEvents: filterEventsByDuration(
         pausesRef.current.map((s) => ({ second: s })),
@@ -198,6 +210,7 @@ export function useSpeechRecognition() {
     }
 
     finalTextRef.current = "";
+    interimTextRef.current = "";
     timelineRef.current = [];
     pausesRef.current = [];
     lastFinalAtRef.current = 0;
@@ -227,4 +240,4 @@ export function useSpeechRecognition() {
     analyzeWithAI,
     reset,
   };
-}
+};

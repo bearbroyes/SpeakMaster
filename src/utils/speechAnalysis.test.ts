@@ -3,6 +3,7 @@ import {
   analyzeSpeechOffline,
   appendFinalChunk,
   buildFillerBuckets,
+  collapseDuplicateTail,
   countWords,
   prepareTranscriptForAnalysis,
   splitSentencesHeuristic,
@@ -24,6 +25,13 @@ describe("speechAnalysis", () => {
     acc = appendFinalChunk(acc, "I am going to give a talk");
     acc = appendFinalChunk(acc, "I am going to give a talk about school");
     expect(countWords(acc)).toBe(9);
+  });
+
+  it("collapses duplicated recognition tail", () => {
+    const dup =
+      "I want to tell you about my school I want to tell you about my school and my friends";
+    const collapsed = collapseDuplicateTail(dup);
+    expect(collapsed).toBe("I want to tell you about my school and my friends");
   });
 
   it("trims garbage after outro phrase", () => {

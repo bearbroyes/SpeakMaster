@@ -66,7 +66,7 @@ export default function App() {
       checkedPoints: Record<number, boolean>;
       durationSeconds: number;
     }) => {
-      const snapshot = speech.finalizeSession();
+      const snapshot = speech.finalizeSession(data.durationSeconds);
       const rubric = {
         ...data.rubric,
         fluencyFillerWords: snapshot.fillerCount <= 2,
