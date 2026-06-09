@@ -7,7 +7,7 @@
 - 30 карточек монологов ОГЭ
 - Подготовка 90с → запись до 2 мин → самооценка
 - Подсчёт слов-паразитов и транскрипт (Web Speech API)
-- AI-обратная связь через Gemini (опционально, прямо из браузера)
+- AI-обратная связь через OpenAI (опционально)
 - Темы оформления, RU/EN, прогресс в localStorage
 
 ## Локально
@@ -15,7 +15,7 @@
 ```bash
 npm install --registry https://registry.npmjs.org
 cp .env.example .env.local
-# Добавьте VITE_GEMINI_API_KEY в .env.local при необходимости
+# Добавьте VITE_OPENAI_API_KEY в .env.local при необходимости
 npm run dev
 ```
 
@@ -39,7 +39,8 @@ Settings → Pages → Source: **GitHub Actions**
 | Секрет | Зачем |
 |--------|--------|
 | `VITE_CLASS_CODE` | Пароль входа на сайт |
-| `VITE_GEMINI_API_KEY` | Ключ Gemini для AI-анализа |
+| `VITE_OPENAI_API_KEY` | Ключ OpenAI (для локальной разработки) |
+| `VITE_OPENAI_PROXY_URL` | URL прокси для AI на GitHub Pages (обязательно для сайта) |
 
 ### 4. Деплой
 
@@ -49,26 +50,28 @@ git push origin main
 
 Workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) соберёт и выложит `dist/` автоматически.
 
-## Gemini на GitHub Pages — важно
+## OpenAI на GitHub Pages — важно
 
-Ключ вшивается при сборке (`VITE_GEMINI_API_KEY` в GitHub Secrets) **или** используется прокси (`VITE_GEMINI_PROXY_URL`).
+Браузер **не может** напрямую вызывать OpenAI API (CORS). Для живого сайта нужен прокси:
 
-### Если AI пишет «Не удалось получить анализ» — чаще всего referrer
+1. [Cloudflare Workers](https://workers.cloudflare.com) → Create Worker
+2. Вставьте код из [`cloudflare/openai-proxy/worker.js`](cloudflare/openai-proxy/worker.js)
+3. Settings → Variables → `OPENAI_API_KEY` = ваш ключ `sk-...`
+4. Deploy → скопируйте URL worker
+5. GitHub → **Settings → Secrets → Actions** → `VITE_OPENAI_PROXY_URL` = URL worker
+6. Push в `main` (пересборка сайта)
 
-В [Google AI Studio](https://aistudio.google.com/apikey) откройте ключ → **Application restrictions** → **HTTP referrers** и добавьте:
+### Локально
+
+В `.env.local`:
 
 ```
-https://bearbroyes.github.io/*
-http://localhost:*/*
+VITE_OPENAI_API_KEY=sk-...
 ```
 
-Сохраните и подождите 1–5 минут. Затем **Ctrl+Shift+R** на сайте.
+`npm run dev` проксирует запросы через Vite — AI работает без Cloudflare.
 
-Убедитесь, что в GitHub → **Settings → Secrets → Actions** есть секрет `VITE_GEMINI_API_KEY` (без пробелов) и после изменения секрета был push в `main` (чтобы Actions пересобрал сайт).
-
-### Прокси (безопаснее)
-
-Готовый Worker: [`cloudflare/gemini-proxy/worker.js`](cloudflare/gemini-proxy/worker.js). После деплоя добавьте секрет `VITE_GEMINI_PROXY_URL` = URL worker. Ключ Gemini храните только в переменных Worker (`GEMINI_API_KEY`).
+**Не публикуйте ключ в чатах и не коммитьте в git.** Только GitHub Secrets / Worker Variables.
 
 ## Скрипты
 
