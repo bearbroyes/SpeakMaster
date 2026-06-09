@@ -202,21 +202,31 @@
         transform: scale(1.1);
       }
 
-      .input-wrapper { position: relative; margin-bottom: 0.5rem; }
+      .input-wrapper { margin-bottom: 0.5rem; }
+
+      .input-field {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
 
       .input-icon-left {
         position: absolute;
         left: 14px;
-        top: 50%;
-        transform: translateY(-50%);
+        top: 0;
+        bottom: 0;
+        margin: auto 0;
+        height: 18px;
         color: #64748b;
         pointer-events: none;
         display: flex;
+        align-items: center;
+        z-index: 1;
       }
 
       .pass-input {
         width: 100%;
-        padding: 15px 108px 15px 44px;
+        padding: 14px 108px 14px 44px;
         background: rgba(15, 23, 42, 0.75);
         border: 1.5px solid rgba(129, 140, 248, 0.2);
         border-radius: 16px;
@@ -240,11 +250,14 @@
       .input-actions {
         position: absolute;
         right: 8px;
-        top: 50%;
-        transform: translateY(-50%);
+        top: 0;
+        bottom: 0;
+        margin: auto 0;
+        height: 32px;
         display: flex;
         align-items: center;
         gap: 2px;
+        z-index: 1;
       }
 
       .icon-btn {
@@ -500,21 +513,23 @@
         <div class="key-dots" id="key_dots" aria-hidden="true"></div>
         
         <div class="input-wrapper">
-          <span class="input-icon-left" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg>
-          </span>
-          <input type="password" id="pass_field_input" class="pass-input" placeholder="Вставьте или введите ключ" autocomplete="off" spellcheck="false" autofocus />
-          <div class="input-actions">
-            <button type="button" id="paste_key_btn" class="icon-btn" title="Вставить из буфера" aria-label="Вставить из буфера">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
-            </button>
-            <button type="button" id="clear_key_btn" class="icon-btn gatekeeper-hidden" title="Очистить" aria-label="Очистить поле">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            </button>
-            <button type="button" id="toggle_password_btn" class="icon-btn" aria-label="Показать или скрыть ключ">
-              <svg id="eye_icon_show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-              <svg id="eye_icon_hide" class="gatekeeper-hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
-            </button>
+          <div class="input-field">
+            <span class="input-icon-left" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg>
+            </span>
+            <input type="password" id="pass_field_input" class="pass-input" placeholder="Вставьте или введите ключ" autocomplete="off" spellcheck="false" autofocus />
+            <div class="input-actions">
+              <button type="button" id="paste_key_btn" class="icon-btn" title="Вставить из буфера" aria-label="Вставить из буфера">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+              </button>
+              <button type="button" id="clear_key_btn" class="icon-btn gatekeeper-hidden" title="Очистить" aria-label="Очистить поле">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              </button>
+              <button type="button" id="toggle_password_btn" class="icon-btn" aria-label="Показать или скрыть ключ">
+                <svg id="eye_icon_show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg id="eye_icon_hide" class="gatekeeper-hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+              </button>
+            </div>
           </div>
           <div id="error_container" class="error-msg">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
