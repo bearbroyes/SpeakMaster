@@ -93,9 +93,8 @@ export type TranslationKey =
   | "examModeDesc"
   | "attemptHistory"
   | "transcript"
+  | "transcriptEmpty"
   | "fillerWords"
-  | "aiAnalyzing"
-  | "aiFeedback"
   | "cheatSheet"
   | "coreRubrics"
   | "speechAnalysisTitle"
@@ -108,6 +107,11 @@ export type TranslationKey =
   | "metricSentenceHint"
   | "metricPauses"
   | "metricPausesHint"
+  | "metricDuration"
+  | "metricDurationValue"
+  | "metricDurationHint"
+  | "metricGrammar"
+  | "metricGrammarHint"
   | "fillerChartTitle"
   | "fillerChartDesc"
   | "fillerBucketLabel"
@@ -212,9 +216,8 @@ const en: Record<TranslationKey, string> = {
   examModeDesc: "Exam mode: no early start, no hints, no cancel during recording.",
   attemptHistory: "Attempt history",
   transcript: "Speech transcript",
+  transcriptEmpty: "Speech was not recognized. Use Chrome or Edge with microphone access, speak clearly in English.",
   fillerWords: "Filler words detected: {count}",
-  aiAnalyzing: "Analyzing speech...",
-  aiFeedback: "AI feedback",
   cheatSheet: "Exam phrases cheat sheet",
   coreRubrics: "Core rubrics ({count}):",
   speechAnalysisTitle: "Offline speech analysis",
@@ -227,6 +230,11 @@ const en: Record<TranslationKey, string> = {
   metricSentenceHint: "{count} sentences total",
   metricPauses: "Long pauses",
   metricPausesHint: "Pauses over 3 seconds",
+  metricDuration: "Duration",
+  metricDurationValue: "{sec}s",
+  metricDurationHint: "Recording length",
+  metricGrammar: "Grammar flags",
+  metricGrammarHint: "Heuristic check — review yourself",
   fillerChartTitle: "Filler words over time",
   fillerChartDesc: "Total fillers: {total}. Each bar = 10 seconds of speech.",
   fillerBucketLabel: "{start}s–{start}s+10: {count} fillers",
@@ -331,9 +339,8 @@ const ru: Record<TranslationKey, string> = {
   examModeDesc: "Режим экзамена: без досрочного старта, подсказок и отмены.",
   attemptHistory: "История попыток",
   transcript: "Транскрипт речи",
+  transcriptEmpty: "Речь не распознана. Используйте Chrome или Edge с доступом к микрофону и говорите чётко по-английски.",
   fillerWords: "Слов-паразитов: {count}",
-  aiAnalyzing: "Анализ речи...",
-  aiFeedback: "Обратная связь ИИ",
   cheatSheet: "Шпаргалка фраз для экзамена",
   coreRubrics: "Пункты плана ({count}):",
   speechAnalysisTitle: "Анализ речи (офлайн)",
@@ -346,6 +353,11 @@ const ru: Record<TranslationKey, string> = {
   metricSentenceHint: "Всего предложений: {count}",
   metricPauses: "Длинные паузы",
   metricPausesHint: "Паузы более 3 секунд",
+  metricDuration: "Длительность",
+  metricDurationValue: "{sec} с",
+  metricDurationHint: "Время записи",
+  metricGrammar: "Грамматика",
+  metricGrammarHint: "Эвристика — проверьте сами",
   fillerChartTitle: "Слова-паразиты по времени",
   fillerChartDesc: "Всего паразитов: {total}. Каждый столбец — 10 секунд речи.",
   fillerBucketLabel: "{start}–{start}+10 с: {count} шт.",

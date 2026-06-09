@@ -11,7 +11,6 @@ import {
   MicOff,
   FileAudio,
   Share2,
-  Loader2,
 } from "lucide-react";
 import type { Monologue, RubricAnswers, TopicProgress } from "../types";
 import type { ThemeStyles } from "../themes";
@@ -32,8 +31,6 @@ interface Props {
   topicProgress: TopicProgress | undefined;
   speechSnapshot: SpeechSessionSnapshot;
   recordingDurationSeconds: number;
-  aiFeedback: string | null;
-  isAnalyzing: boolean;
   onDownload: () => void;
   onShare: () => void;
   onRetry: () => void;
@@ -51,8 +48,6 @@ export function ResultPhase({
   topicProgress,
   speechSnapshot,
   recordingDurationSeconds,
-  aiFeedback,
-  isAnalyzing,
   onDownload,
   onShare,
   onRetry,
@@ -151,41 +146,31 @@ export function ResultPhase({
             </div>
           )}
 
-          {displayTranscript && (
-            <div className={`rounded-2xl p-4 border text-xs space-y-2 ${ST.aspectItem}`}>
-              <h4 className={`font-bold ${ST.aspectLabel}`}>{t("transcript")}</h4>
-              <p className={`leading-relaxed ${ST.workflowSubtitle}`}>{displayTranscript}</p>
-              <p className={`${ST.fillerText} font-mono`}>{t("fillerWords", { count: displayFillerCount })}</p>
-              {speechAnalysis && speechAnalysis.fillerBreakdown.length > 0 && (
-                <div className="flex flex-wrap gap-1 pt-1">
-                  {speechAnalysis.fillerBreakdown.map((item) => (
-                    <span
-                      key={item.word}
-                      className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${ST.warningBadge}`}
-                    >
-                      {item.word} ×{item.count}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+          <div className={`rounded-2xl p-4 border text-xs space-y-2 ${ST.aspectItem}`}>
+            <h4 className={`font-bold ${ST.aspectLabel}`}>{t("transcript")}</h4>
+            {displayTranscript ? (
+              <>
+                <p className={`leading-relaxed ${ST.workflowSubtitle}`}>{displayTranscript}</p>
+                <p className={`${ST.fillerText} font-mono`}>{t("fillerWords", { count: displayFillerCount })}</p>
+                {speechAnalysis && speechAnalysis.fillerBreakdown.length > 0 && (
+                  <div className="flex flex-wrap gap-1 pt-1">
+                    {speechAnalysis.fillerBreakdown.map((item) => (
+                      <span
+                        key={item.word}
+                        className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${ST.warningBadge}`}
+                      >
+                        {item.word} ×{item.count}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <p className={ST.workflowSubtitle}>{t("transcriptEmpty")}</p>
+            )}
+          </div>
 
           {speechAnalysis && <SpeechAnalysisPanel ST={ST} t={t} analysis={speechAnalysis} />}
-
-          {(isAnalyzing || aiFeedback) && (
-            <div className={`rounded-2xl p-4 border text-xs space-y-2 ${ST.aspectItem}`}>
-              <h4 className={`font-bold flex items-center gap-2 ${ST.aspectLabel}`}>
-                {isAnalyzing && <Loader2 className="h-4 w-4 animate-spin" />}
-                {t("aiFeedback")}
-              </h4>
-              {isAnalyzing ? (
-                <p>{t("aiAnalyzing")}</p>
-              ) : (
-                <p className={`leading-relaxed ${ST.workflowSubtitle}`}>{aiFeedback}</p>
-              )}
-            </div>
-          )}
 
           <div className={`rounded-2xl p-4 border text-xs space-y-2 ${ST.aspectItem}`}>
             <h4 className={`font-bold flex items-center gap-1.5 ${ST.iconAccent}`}>

@@ -6,8 +6,6 @@ interface Window {
 
 interface ImportMetaEnv {
   readonly VITE_CLASS_CODE: string;
-  readonly VITE_OPENAI_API_KEY: string;
-  readonly VITE_OPENAI_PROXY_URL: string;
 }
 
 interface ImportMeta {

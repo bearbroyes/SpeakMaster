@@ -86,9 +86,6 @@ export default function App() {
         );
         setProgress((prev) => ({ ...prev, [activeMonologue.id]: updated }));
       }
-      if (snapshot.transcript && activeMonologue) {
-        speech.analyzeWithAI(snapshot.transcript, activeMonologue.theme, activeMonologue.points);
-      }
       setPhase("RESULT");
     },
     [activeMonologue, speech]
@@ -362,8 +359,6 @@ export default function App() {
               topicProgress={getTopicProgress(activeMonologue.id)}
               speechSnapshot={speech.sessionSnapshot}
               recordingDurationSeconds={lastRecordingDuration}
-              aiFeedback={speech.aiFeedback}
-              isAnalyzing={speech.isAnalyzing}
               onDownload={() =>
                 recording.recordingBlob && triggerDownload(recording.recordingBlob, activeMonologue)
               }

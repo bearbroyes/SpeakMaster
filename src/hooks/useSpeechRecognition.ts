@@ -7,7 +7,6 @@ import {
   filterEventsByDuration,
   prepareTranscriptForAnalysis,
 } from "../utils/speechAnalysis";
-import { analyzeTranscript, OpenAIError, isOpenAIConfigured } from "../utils/openai";
 
 const LONG_PAUSE_SEC = 3;
 
@@ -24,8 +23,6 @@ export function useSpeechRecognition() {
   const [fillerCount, setFillerCount] = useState(0);
   const [fillerTimeline, setFillerTimeline] = useState<FillerEvent[]>([]);
   const [pauseEvents, setPauseEvents] = useState<number[]>([]);
-  const [aiFeedback, setAiFeedback] = useState<string | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [sessionSnapshot, setSessionSnapshot] = useState<SpeechSessionSnapshot | null>(null);
 
   const acceptingRef = useRef(true);
@@ -175,28 +172,6 @@ export function useSpeechRecognition() {
     finalizeSession();
   }, [finalizeSession]);
 
-  const analyzeWithAI = useCallback(async (text: string, theme: string, points: string[]) => {
-    if (!text.trim()) return;
-    if (!isOpenAIConfigured()) return;
-
-    setIsAnalyzing(true);
-    setAiFeedback(null);
-    try {
-      const feedback = await analyzeTranscript(text, theme, points);
-      setAiFeedback(feedback);
-    } catch (err) {
-      let message = "Не удалось получить анализ.";
-      if (err instanceof OpenAIError) {
-        message = err.hint ? `${err.message}\n\n${err.hint}` : err.message;
-      } else if (err instanceof Error && err.message) {
-        message = err.message;
-      }
-      setAiFeedback(message);
-    } finally {
-      setIsAnalyzing(false);
-    }
-  }, []);
-
   const reset = useCallback(() => {
     acceptingRef.current = false;
     const recognition = recognitionRef.current;
@@ -220,8 +195,6 @@ export function useSpeechRecognition() {
     setFillerTimeline([]);
     setPauseEvents([]);
     setSessionSnapshot(null);
-    setAiFeedback(null);
-    setIsAnalyzing(false);
     setIsListening(false);
   }, []);
 
@@ -232,12 +205,9 @@ export function useSpeechRecognition() {
     fillerTimeline,
     pauseEvents,
     sessionSnapshot,
-    aiFeedback,
-    isAnalyzing,
     startLiveRecognition,
     stopRecognition,
     finalizeSession,
-    analyzeWithAI,
     reset,
   };
 };

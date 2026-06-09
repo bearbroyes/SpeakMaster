@@ -7,7 +7,7 @@
 - 30 карточек монологов ОГЭ
 - Подготовка 90с → запись до 2 мин → самооценка
 - Подсчёт слов-паразитов и транскрипт (Web Speech API)
-- AI-обратная связь через OpenAI (опционально)
+- Офлайн-анализ речи: транскрипт, темп, паузы, слова-паразиты (Web Speech API)
 - Темы оформления, RU/EN, прогресс в localStorage
 
 ## Локально
@@ -15,7 +15,6 @@
 ```bash
 npm install --registry https://registry.npmjs.org
 cp .env.example .env.local
-# Добавьте VITE_OPENAI_API_KEY в .env.local при необходимости
 npm run dev
 ```
 
@@ -39,8 +38,6 @@ Settings → Pages → Source: **GitHub Actions**
 | Секрет | Зачем |
 |--------|--------|
 | `VITE_CLASS_CODE` | Пароль входа на сайт |
-| `VITE_OPENAI_API_KEY` | Ключ OpenAI (для локальной разработки) |
-| `VITE_OPENAI_PROXY_URL` | URL прокси для AI на GitHub Pages (обязательно для сайта) |
 
 ### 4. Деплой
 
@@ -50,28 +47,9 @@ git push origin main
 
 Workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) соберёт и выложит `dist/` автоматически.
 
-## OpenAI на GitHub Pages — важно
+## Распознавание речи
 
-Браузер **не может** напрямую вызывать OpenAI API (CORS). Для живого сайта нужен прокси:
-
-1. [Cloudflare Workers](https://workers.cloudflare.com) → Create Worker
-2. Вставьте код из [`cloudflare/openai-proxy/worker.js`](cloudflare/openai-proxy/worker.js)
-3. Settings → Variables → `OPENAI_API_KEY` = ваш ключ `sk-...`
-4. Deploy → скопируйте URL worker
-5. GitHub → **Settings → Secrets → Actions** → `VITE_OPENAI_PROXY_URL` = URL worker
-6. Push в `main` (пересборка сайта)
-
-### Локально
-
-В `.env.local`:
-
-```
-VITE_OPENAI_API_KEY=sk-...
-```
-
-`npm run dev` проксирует запросы через Vite — AI работает без Cloudflare.
-
-**Не публикуйте ключ в чатах и не коммитьте в git.** Только GitHub Secrets / Worker Variables.
+Транскрипт и метрики работают **офлайн в браузере** (Web Speech API). Лучше всего в **Chrome** или **Edge** с разрешённым микрофоном. Интернет для анализа не нужен.
 
 ## Скрипты
 

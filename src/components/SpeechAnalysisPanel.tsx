@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { BarChart3, Clock, MessageSquare, PauseCircle, Type } from "lucide-react";
+import { BarChart3, Clock, MessageSquare, PauseCircle, Timer, Type, AlertTriangle } from "lucide-react";
 import type { ThemeStyles } from "../themes";
 import type { TranslationKey } from "../i18n/translations";
 import type { MetricStatus, SpeechAnalysis } from "../utils/speechAnalysis";
@@ -85,6 +85,27 @@ export function SpeechAnalysisPanel({ ST, t, analysis }: Props) {
           value={String(analysis.longPauseCount)}
           hint={t("metricPausesHint")}
           status={analysis.longPauseCount <= 1 ? "good" : analysis.longPauseCount <= 3 ? "warn" : "bad"}
+        />
+        <MetricCard
+          ST={ST}
+          icon={<Timer className="h-3 w-3" />}
+          label={t("metricDuration")}
+          value={t("metricDurationValue", { sec: analysis.speakingDurationSeconds })}
+          hint={t("metricDurationHint")}
+        />
+        <MetricCard
+          ST={ST}
+          icon={<AlertTriangle className="h-3 w-3" />}
+          label={t("metricGrammar")}
+          value={String(analysis.estimatedGrammarIssues)}
+          hint={t("metricGrammarHint")}
+          status={
+            analysis.estimatedGrammarIssues <= 3
+              ? "good"
+              : analysis.estimatedGrammarIssues <= 6
+                ? "warn"
+                : "bad"
+          }
         />
       </div>
 
