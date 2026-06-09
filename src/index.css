@@ -54,14 +54,6 @@
     linear-gradient(rgba(99, 102, 241, 0.06) 1px, transparent 1px),
     linear-gradient(90deg, rgba(99, 102, 241, 0.06) 1px, transparent 1px);
 }
-.ambient-noise {
-  position: absolute;
-  inset: 0;
-  opacity: 0.35;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
-  pointer-events: none;
-}
 .ambient-orb {
   position: absolute;
   border-radius: 50%;
@@ -145,10 +137,10 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-  opacity: 0.65;
+  opacity: 0.35;
   transition: opacity 0.4s ease;
 }
-.gradient-border-wrap:hover::before { opacity: 1; }
+.gradient-border-wrap:hover::before { opacity: 0.55; }
 .theme-light .gradient-border-wrap::before {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.45), rgba(236, 72, 153, 0.2), rgba(59, 130, 246, 0.15));
 }
@@ -172,21 +164,25 @@
   color: transparent;
 }
 
-/* ─── Shimmer & shine ─── */
+/* ─── Shimmer & shine (hover-only, very subtle) ─── */
 @keyframes shimmer-sweep {
-  0% { transform: translateX(-120%) skewX(-12deg); }
-  100% { transform: translateX(220%) skewX(-12deg); }
+  0% { transform: translateX(-120%) skewX(-12deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translateX(220%) skewX(-12deg); opacity: 0; }
 }
 .card-shine { position: relative; overflow: hidden; }
 .card-shine::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.09) 50%, transparent 58%);
+  background: linear-gradient(105deg, transparent 44%, rgba(255, 255, 255, 0.03) 50%, transparent 56%);
   transform: translateX(-120%) skewX(-12deg);
-  animation: shimmer-sweep 6s ease-in-out infinite;
+  opacity: 0;
   pointer-events: none;
   border-radius: inherit;
+}
+.card-shine:hover::after {
+  animation: shimmer-sweep 1.4s ease-out 1;
 }
 
 @keyframes badge-glow {
@@ -224,12 +220,16 @@
   content: "";
   position: absolute;
   inset: -2px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   transform: translateX(-100%);
-  transition: transform 0.6s ease;
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.2s ease;
 }
-.btn-glow:hover::before { transform: translateX(100%); }
-.btn-glow:hover { filter: brightness(1.08); }
+.btn-glow:hover::before {
+  transform: translateX(100%);
+  opacity: 1;
+}
+.btn-glow:hover { filter: brightness(1.04); }
 .btn-glow:active { transform: scale(0.97); }
 
 /* ─── Progress bar ─── */

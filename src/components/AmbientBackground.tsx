@@ -16,7 +16,6 @@ export function AmbientBackground({ theme }: Props) {
       <div className={`ambient-orb ambient-orb-2 ${orb}`} />
       <div className={`ambient-orb ambient-orb-3 ${orb}`} />
       <div className="ambient-grid" />
-      <div className="ambient-noise" />
     </div>
   );
 }
