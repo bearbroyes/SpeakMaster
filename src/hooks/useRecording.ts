@@ -118,7 +118,7 @@ export function useRecording(
           url,
           rubric,
           checkedPoints: { ...checkedPointsRef.current },
-          durationSeconds: 120 - recordingSecondsRef.current,
+          durationSeconds: Math.max(1, 120 - recordingSecondsRef.current),
           mimeType: mimeTypeRef.current,
         });
       };

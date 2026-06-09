@@ -10,6 +10,8 @@ interface Props {
   ST: ThemeStyles;
   t: (key: TranslationKey, vars?: Record<string, string | number>) => string;
   monologue: Monologue;
+  liveTranscript?: string;
+  speechSupported?: boolean;
   recordingSeconds: number;
   checkedPoints: Record<number, boolean>;
   setCheckedPoints: Dispatch<SetStateAction<Record<number, boolean>>>;
@@ -73,6 +75,8 @@ export function RecordingPhase({
   ST,
   t,
   monologue,
+  liveTranscript,
+  speechSupported = true,
   recordingSeconds,
   checkedPoints,
   setCheckedPoints,
@@ -210,6 +214,17 @@ export function RecordingPhase({
             )}
 
             <p className={`mt-4 text-[10px] text-center ${ST.clockLabel}`}>{t("storageNote")}</p>
+
+            {!speechSupported ? (
+              <p className={`mt-3 text-[10px] text-center max-w-xs ${ST.fillerText}`}>{t("speechUnsupported")}</p>
+            ) : (
+              <div className={`mt-3 w-full max-w-sm rounded-xl border p-3 text-left ${ST.aspectItem}`}>
+                <p className={`text-[9px] font-bold uppercase ${ST.aspectLabel}`}>{t("liveTranscript")}</p>
+                <p className={`text-[11px] mt-1 leading-relaxed min-h-[2.5rem] ${ST.workflowSubtitle}`}>
+                  {liveTranscript?.trim() || t("liveTranscriptWaiting")}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </motion.div>

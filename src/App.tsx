@@ -174,11 +174,14 @@ export default function App() {
     if (!activeMonologue) return;
     speech.reset();
     recordingElapsedRef.current = 0;
-    speech.startLiveRecognition(() => recordingElapsedRef.current);
     try {
       await recording.startRecording(activeMonologue);
       setPhase("RECORDING");
+      window.setTimeout(() => {
+        speech.startLiveRecognition(() => recordingElapsedRef.current);
+      }, 300);
     } catch {
+      speech.reset();
       setPhase("GRID");
     }
   };
@@ -337,6 +340,8 @@ export default function App() {
               ST={ST}
               t={t}
               monologue={activeMonologue}
+              liveTranscript={speech.transcript}
+              speechSupported={speech.isSupported}
               recordingSeconds={recording.recordingSeconds}
               checkedPoints={recording.checkedPoints}
               setCheckedPoints={recording.setCheckedPoints}

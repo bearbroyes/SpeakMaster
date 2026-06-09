@@ -177,7 +177,8 @@ export function prepareTranscriptForAnalysis(transcript: string, durationSeconds
   text = collapseDuplicateTail(text);
   text = trimTranscriptAtOutro(text);
 
-  const maxWords = Math.ceil((durationSeconds / 60) * MAX_PLAUSIBLE_WPM);
+  const safeDuration = Math.max(durationSeconds, 5);
+  const maxWords = Math.ceil((safeDuration / 60) * MAX_PLAUSIBLE_WPM);
   const words = text.match(/\b[a-zA-Z']+\b/g) ?? [];
   if (words.length > maxWords) {
     text = words.slice(0, maxWords).join(" ");

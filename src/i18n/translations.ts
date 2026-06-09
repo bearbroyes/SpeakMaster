@@ -94,6 +94,9 @@ export type TranslationKey =
   | "attemptHistory"
   | "transcript"
   | "transcriptEmpty"
+  | "liveTranscript"
+  | "liveTranscriptWaiting"
+  | "speechUnsupported"
   | "fillerWords"
   | "cheatSheet"
   | "coreRubrics"
@@ -217,6 +220,9 @@ const en: Record<TranslationKey, string> = {
   attemptHistory: "Attempt history",
   transcript: "Speech transcript",
   transcriptEmpty: "Speech was not recognized. Use Chrome or Edge with microphone access, speak clearly in English.",
+  liveTranscript: "Live transcript",
+  liveTranscriptWaiting: "Listening… speak in English",
+  speechUnsupported: "Speech recognition is not available in this browser. Use Chrome or Edge.",
   fillerWords: "Filler words detected: {count}",
   cheatSheet: "Exam phrases cheat sheet",
   coreRubrics: "Core rubrics ({count}):",
@@ -340,6 +346,9 @@ const ru: Record<TranslationKey, string> = {
   attemptHistory: "История попыток",
   transcript: "Транскрипт речи",
   transcriptEmpty: "Речь не распознана. Используйте Chrome или Edge с доступом к микрофону и говорите чётко по-английски.",
+  liveTranscript: "Транскрипт в реальном времени",
+  liveTranscriptWaiting: "Слушаю… говорите по-английски",
+  speechUnsupported: "Распознавание речи недоступно в этом браузере. Используйте Chrome или Edge.",
   fillerWords: "Слов-паразитов: {count}",
   cheatSheet: "Шпаргалка фраз для экзамена",
   coreRubrics: "Пункты плана ({count}):",

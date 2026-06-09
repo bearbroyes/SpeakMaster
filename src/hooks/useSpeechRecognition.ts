@@ -2,7 +2,6 @@ import { useCallback, useRef, useState } from "react";
 import { countFillerWords, findFillersInChunk, getSpeechRecognition } from "../utils/speech";
 import type { FillerEvent } from "../utils/speechAnalysis";
 import {
-  appendFinalChunk,
   mergeWithInterim,
   filterEventsByDuration,
   prepareTranscriptForAnalysis,
@@ -17,6 +16,28 @@ export interface SpeechSessionSnapshot {
   pauseEvents: number[];
 }
 
+function rebuildTranscriptFromResults(event: SpeechRecognitionEvent): {
+  final: string;
+  interim: string;
+} {
+  let final = "";
+  let interim = "";
+
+  for (let i = 0; i < event.results.length; i++) {
+    const text = event.results[i][0].transcript;
+    if (event.results[i].isFinal) {
+      final += text;
+    } else {
+      interim += text;
+    }
+  }
+
+  return {
+    final: final.replace(/\s+/g, " ").trim(),
+    interim: interim.replace(/\s+/g, " ").trim(),
+  };
+}
+
 export function useSpeechRecognition() {
   const [transcript, setTranscript] = useState("");
   const [isListening, setIsListening] = useState(false);
@@ -24,6 +45,7 @@ export function useSpeechRecognition() {
   const [fillerTimeline, setFillerTimeline] = useState<FillerEvent[]>([]);
   const [pauseEvents, setPauseEvents] = useState<number[]>([]);
   const [sessionSnapshot, setSessionSnapshot] = useState<SpeechSessionSnapshot | null>(null);
+  const [isSupported] = useState(() => !!getSpeechRecognition());
 
   const acceptingRef = useRef(true);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -34,6 +56,7 @@ export function useSpeechRecognition() {
   const pausesRef = useRef<number[]>([]);
   const getElapsedRef = useRef<(() => number) | undefined>(undefined);
   const maxDurationRef = useRef(120);
+  const restartingRef = useRef(false);
 
   const syncLiveDisplay = useCallback(() => {
     const display = mergeWithInterim(finalTextRef.current, interimTextRef.current).trim();
@@ -42,6 +65,69 @@ export function useSpeechRecognition() {
     setFillerTimeline([...timelineRef.current]);
     setPauseEvents([...pausesRef.current]);
   }, []);
+
+  const attachRecognitionHandlers = useCallback(
+    (recognition: SpeechRecognition) => {
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        if (!acceptingRef.current) return;
+
+        const now = Date.now();
+        const elapsed = () => {
+          const raw = Math.max(0, Math.round(getElapsedRef.current?.() ?? 0));
+          return Math.min(raw, maxDurationRef.current);
+        };
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (!event.results[i].isFinal) continue;
+          const text = event.results[i][0].transcript;
+          const gapSec = (now - lastFinalAtRef.current) / 1000;
+          if (gapSec >= LONG_PAUSE_SEC && finalTextRef.current.length > 0) {
+            pausesRef.current.push(elapsed());
+          }
+          lastFinalAtRef.current = now;
+
+          for (const word of findFillersInChunk(text)) {
+            timelineRef.current.push({ second: elapsed(), word });
+          }
+        }
+
+        const rebuilt = rebuildTranscriptFromResults(event);
+        finalTextRef.current = rebuilt.final;
+        interimTextRef.current = rebuilt.interim;
+        syncLiveDisplay();
+      };
+
+      recognition.onerror = (event: Event) => {
+        if (!acceptingRef.current) return;
+        const code = (event as SpeechRecognitionErrorEvent).error;
+        if (code === "no-speech" || code === "aborted") return;
+        if (code === "not-allowed" || code === "service-not-allowed") {
+          acceptingRef.current = false;
+          setIsListening(false);
+        }
+      };
+
+      recognition.onend = () => {
+        if (!acceptingRef.current) {
+          setIsListening(false);
+          return;
+        }
+        if (restartingRef.current) return;
+        restartingRef.current = true;
+        window.setTimeout(() => {
+          restartingRef.current = false;
+          if (!acceptingRef.current || !recognitionRef.current) return;
+          try {
+            recognitionRef.current.start();
+            setIsListening(true);
+          } catch {
+            setIsListening(false);
+          }
+        }, 120);
+      };
+    },
+    [syncLiveDisplay]
+  );
 
   const startLiveRecognition = useCallback(
     (getElapsed?: () => number, maxDurationSeconds = 120) => {
@@ -66,59 +152,28 @@ export function useSpeechRecognition() {
       setPauseEvents([]);
       setSessionSnapshot(null);
 
-      recognition.onresult = (event: SpeechRecognitionEvent) => {
-        if (!acceptingRef.current) return;
+      attachRecognitionHandlers(recognition);
 
-        let interim = "";
-        const now = Date.now();
-        const elapsed = () => {
-          const raw = Math.max(0, Math.round(getElapsedRef.current?.() ?? 0));
-          return Math.min(raw, maxDurationRef.current);
-        };
+      try {
+        recognition.start();
+      } catch {
+        return false;
+      }
 
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const text = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            const gapSec = (now - lastFinalAtRef.current) / 1000;
-            if (gapSec >= LONG_PAUSE_SEC && finalTextRef.current.length > 0) {
-              pausesRef.current.push(elapsed());
-            }
-            lastFinalAtRef.current = now;
-
-            finalTextRef.current = appendFinalChunk(finalTextRef.current, text);
-
-            for (const word of findFillersInChunk(text)) {
-              timelineRef.current.push({ second: elapsed(), word });
-            }
-          } else {
-            interim += text;
-          }
-        }
-
-        interimTextRef.current = interim.trim();
-        syncLiveDisplay();
-      };
-
-      recognition.onerror = () => {
-        if (acceptingRef.current) setIsListening(false);
-      };
-
-      recognition.onend = () => {
-        if (acceptingRef.current) setIsListening(false);
-      };
-
-      recognition.start();
       setIsListening(true);
       setTranscript("");
       setFillerCount(0);
       return true;
     },
-    [syncLiveDisplay]
+    [attachRecognitionHandlers]
   );
 
   const finalizeSession = useCallback((durationSeconds?: number): SpeechSessionSnapshot => {
-    acceptingRef.current = false;
+    const merged = mergeWithInterim(finalTextRef.current, interimTextRef.current).trim();
+    finalTextRef.current = merged;
     interimTextRef.current = "";
+
+    acceptingRef.current = false;
 
     const recognition = recognitionRef.current;
     if (recognition) {
@@ -126,10 +181,10 @@ export function useSpeechRecognition() {
       recognition.onend = null;
       recognition.onerror = null;
       try {
-        recognition.abort();
+        recognition.stop();
       } catch {
         try {
-          recognition.stop();
+          recognition.abort();
         } catch {
           /* already stopped */
         }
@@ -139,19 +194,20 @@ export function useSpeechRecognition() {
 
     setIsListening(false);
 
+    const elapsedFallback = Math.max(
+      1,
+      Math.round(getElapsedRef.current?.() ?? maxDurationRef.current)
+    );
     const duration =
       durationSeconds != null && durationSeconds > 0
         ? Math.round(durationSeconds)
-        : Math.min(
-            Math.max(1, Math.round(getElapsedRef.current?.() ?? maxDurationRef.current)),
-            maxDurationRef.current
-          );
+        : Math.min(elapsedFallback, maxDurationRef.current);
 
-    const cleanedTranscript = prepareTranscriptForAnalysis(finalTextRef.current.trim(), duration);
+    const cleanedTranscript = prepareTranscriptForAnalysis(merged, duration);
 
     const snapshot: SpeechSessionSnapshot = {
-      transcript: cleanedTranscript,
-      fillerCount: countFillerWords(cleanedTranscript),
+      transcript: cleanedTranscript || merged,
+      fillerCount: countFillerWords(cleanedTranscript || merged),
       fillerTimeline: filterEventsByDuration(timelineRef.current, duration),
       pauseEvents: filterEventsByDuration(
         pausesRef.current.map((s) => ({ second: s })),
@@ -176,6 +232,9 @@ export function useSpeechRecognition() {
     acceptingRef.current = false;
     const recognition = recognitionRef.current;
     if (recognition) {
+      recognition.onresult = null;
+      recognition.onend = null;
+      recognition.onerror = null;
       try {
         recognition.abort();
       } catch {
@@ -201,6 +260,7 @@ export function useSpeechRecognition() {
   return {
     transcript,
     isListening,
+    isSupported,
     fillerCount,
     fillerTimeline,
     pauseEvents,
