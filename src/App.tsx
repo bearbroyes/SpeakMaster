@@ -8,7 +8,7 @@ import { AnimatePresence } from "motion/react";
 import { Star } from "lucide-react";
 import { motion } from "motion/react";
 import { MONOLOGUES } from "./data";
-import type { Monologue, Phase, PracticeMode, RubricAnswers } from "./types";
+import type { Monologue, Phase, RubricAnswers } from "./types";
 import { ROOT_BG_STYLES } from "./themes";
 import { useTheme } from "./hooks/useTheme";
 import { useI18n } from "./hooks/useI18n";
@@ -38,7 +38,6 @@ export default function App() {
   const [phase, setPhase] = useState<Phase>("GRID");
   const [prepTimeLeft, setPrepTimeLeft] = useState(90);
   const [bufferTimeLeft, setBufferTimeLeft] = useState(5);
-  const [practiceMode, setPracticeMode] = useState<PracticeMode>("training");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedThemeFilter, setSelectedThemeFilter] = useState<string | null>(null);
   const [showUncompletedOnly, setShowUncompletedOnly] = useState(false);
@@ -199,7 +198,6 @@ export default function App() {
   };
 
   const handleFinishPrepEarly = () => {
-    if (practiceMode === "exam") return;
     setPhase("BUFFER");
     setBufferTimeLeft(5);
   };
@@ -312,8 +310,6 @@ export default function App() {
               progress={progress}
               showUncompletedOnly={showUncompletedOnly}
               setShowUncompletedOnly={setShowUncompletedOnly}
-              practiceMode={practiceMode}
-              setPracticeMode={setPracticeMode}
               micPermissionError={recording.micPermissionError}
               onSelect={startPrepWorkflow}
               onSurpriseMe={handleSurpriseMe}
@@ -326,7 +322,6 @@ export default function App() {
               t={t}
               monologue={activeMonologue}
               prepTimeLeft={prepTimeLeft}
-              practiceMode={practiceMode}
               formatTime={formatTime}
               onFinishEarly={handleFinishPrepEarly}
               onCancel={handleBackToDashboard}
@@ -345,10 +340,9 @@ export default function App() {
               recordingSeconds={recording.recordingSeconds}
               checkedPoints={recording.checkedPoints}
               setCheckedPoints={recording.setCheckedPoints}
-              practiceMode={practiceMode}
               formatTime={formatTime}
               onStop={recording.stopRecording}
-              onCancel={practiceMode === "training" ? handleBackToDashboard : undefined}
+              onCancel={handleBackToDashboard}
             />
           )}
 

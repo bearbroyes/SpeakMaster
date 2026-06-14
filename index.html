@@ -583,6 +583,7 @@
       const SECRET_KEY =
         !ENV_CODE || ENV_CODE.startsWith("%") ? "Oge_Monolog_012" : ENV_CODE;
       const SESSION_KEY = "speakmaster_access";
+      const MAX_DOTS = SECRET_KEY.length;
 
       const overlay = document.getElementById("gatekeeper-overlay");
       const rootContainer = document.getElementById("root");
@@ -601,8 +602,9 @@
       const lockIconLock = document.getElementById("lock_icon_lock");
       const lockIconOk = document.getElementById("lock_icon_ok");
       const pageUrl = window.location.href.split("#")[0];
-      const MAX_DOTS = 16;
       let isUnlocking = false;
+
+      if (input) input.maxLength = MAX_DOTS;
 
       document.body.style.overflow = "hidden";
 

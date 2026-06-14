@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, type Dispatch, RefObject, SetStateAction }
 import { createPortal } from "react-dom";
 import { motion } from "motion/react";
 import { Check } from "lucide-react";
-import type { Monologue, PracticeMode } from "../types";
+import type { Monologue } from "../types";
 import type { ThemeStyles } from "../themes";
 import type { TranslationKey } from "../i18n/translations";
 
@@ -15,7 +15,6 @@ interface Props {
   recordingSeconds: number;
   checkedPoints: Record<number, boolean>;
   setCheckedPoints: Dispatch<SetStateAction<Record<number, boolean>>>;
-  practiceMode: PracticeMode;
   formatTime: (s: number) => string;
   onStop: () => void;
   onCancel?: () => void;
@@ -24,14 +23,12 @@ interface Props {
 function RecordingActions({
   ST,
   t,
-  practiceMode,
   onStop,
   onCancel,
   stopRef,
 }: {
   ST: ThemeStyles;
   t: Props["t"];
-  practiceMode: PracticeMode;
   onStop: () => void;
   onCancel?: () => void;
   stopRef?: RefObject<HTMLButtonElement | null>;
@@ -58,7 +55,7 @@ function RecordingActions({
         </svg>
         <span className="pointer-events-none">{t("stopRecord")}</span>
       </button>
-      {practiceMode === "training" && onCancel && (
+      {onCancel && (
         <button
           type="button"
           onClick={onCancel}
@@ -80,7 +77,6 @@ export function RecordingPhase({
   recordingSeconds,
   checkedPoints,
   setCheckedPoints,
-  practiceMode,
   formatTime,
   onStop,
   onCancel,
@@ -106,7 +102,6 @@ export function RecordingPhase({
         <RecordingActions
           ST={ST}
           t={t}
-          practiceMode={practiceMode}
           onStop={onStop}
           onCancel={onCancel}
           stopRef={stopButtonRef}
@@ -194,24 +189,16 @@ export function RecordingPhase({
             </div>
 
             <div className="hidden md:block w-full space-y-3">
-              <RecordingActions
-                ST={ST}
-                t={t}
-                practiceMode={practiceMode}
-                onStop={onStop}
-                onCancel={onCancel}
-              />
+              <RecordingActions ST={ST} t={t} onStop={onStop} onCancel={onCancel} />
             </div>
 
             <div className="md:hidden h-32 w-full shrink-0" aria-hidden="true" />
 
-            {practiceMode === "training" && (
-              <div className={`mt-6 border rounded-2xl p-4 w-full max-w-sm text-center text-[10px] ${ST.aspectItem}`}>
+            <div className={`mt-6 border rounded-2xl p-4 w-full max-w-sm text-center text-[10px] ${ST.aspectItem}`}>
                 <span className={`font-extrabold uppercase block ${ST.aspectLabel}`}>{t("outlineTips")}</span>
                 <p className="opacity-80 italic mt-2">"I am going to give a talk..."</p>
                 <p className="opacity-80 italic">"That is all I wanted to say. Thank you."</p>
-              </div>
-            )}
+            </div>
 
             <p className={`mt-4 text-[10px] text-center ${ST.clockLabel}`}>{t("storageNote")}</p>
 

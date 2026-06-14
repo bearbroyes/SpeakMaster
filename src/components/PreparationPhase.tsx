@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { Play, Clock, Lightbulb } from "lucide-react";
-import type { Monologue, PracticeMode } from "../types";
+import type { Monologue } from "../types";
 import type { ThemeStyles } from "../themes";
 import type { TranslationKey } from "../i18n/translations";
 
@@ -9,7 +9,6 @@ interface Props {
   t: (key: TranslationKey, vars?: Record<string, string | number>) => string;
   monologue: Monologue;
   prepTimeLeft: number;
-  practiceMode: PracticeMode;
   formatTime: (s: number) => string;
   onFinishEarly: () => void;
   onCancel: () => void;
@@ -20,7 +19,6 @@ export function PreparationPhase({
   t,
   monologue,
   prepTimeLeft,
-  practiceMode,
   formatTime,
   onFinishEarly,
   onCancel,
@@ -110,20 +108,16 @@ export function PreparationPhase({
           </div>
 
           <div className="w-full space-y-3">
-            {practiceMode === "training" && (
-              <button
-                onClick={onFinishEarly}
-                className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-3 cursor-pointer ${ST.accentButton}`}
-              >
-                <Play className="h-4 w-4 fill-white" />
-                <span>{t("startEarly")}</span>
-              </button>
-            )}
-            {practiceMode === "training" && (
-              <button onClick={onCancel} className={`w-full py-3.5 rounded-2xl font-semibold text-xs border cursor-pointer ${ST.cancelButton}`}>
-                {t("cancelExit")}
-              </button>
-            )}
+            <button
+              onClick={onFinishEarly}
+              className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-3 cursor-pointer ${ST.accentButton}`}
+            >
+              <Play className="h-4 w-4 fill-white" />
+              <span>{t("startEarly")}</span>
+            </button>
+            <button onClick={onCancel} className={`w-full py-3.5 rounded-2xl font-semibold text-xs border cursor-pointer ${ST.cancelButton}`}>
+              {t("cancelExit")}
+            </button>
           </div>
         </div>
       </div>

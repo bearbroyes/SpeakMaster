@@ -2,7 +2,7 @@ import type { MouseEvent } from "react";
 import { motion } from "motion/react";
 import { Search, Sparkles, Sliders, ChevronRight, Star, AlertCircle } from "lucide-react";
 import { MONOLOGUES } from "../data";
-import type { Monologue, PracticeMode, TopicProgress, TopicStatus } from "../types";
+import type { Monologue, TopicProgress, TopicStatus } from "../types";
 import type { ThemeStyles } from "../themes";
 import type { TranslationKey } from "../i18n/translations";
 import { countCompleted } from "../utils/progress";
@@ -19,8 +19,6 @@ interface Props {
   progress: Record<number, TopicProgress>;
   showUncompletedOnly: boolean;
   setShowUncompletedOnly: (v: boolean) => void;
-  practiceMode: PracticeMode;
-  setPracticeMode: (m: PracticeMode) => void;
   micPermissionError: string | null;
   onSelect: (m: Monologue) => void;
   onSurpriseMe: (e: MouseEvent<HTMLButtonElement>) => void;
@@ -50,8 +48,6 @@ export function GridDashboard({
   progress,
   showUncompletedOnly,
   setShowUncompletedOnly,
-  practiceMode,
-  setPracticeMode,
   micPermissionError,
   onSelect,
   onSurpriseMe,
@@ -125,23 +121,6 @@ export function GridDashboard({
       </div>
 
       <div className={`glass-premium flex flex-wrap items-center gap-3 p-4 rounded-2xl border ${ST.filterConsole}`}>
-        <button
-          onClick={() => setPracticeMode("training")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-            practiceMode === "training" ? ST.pillActive : ST.pillInactive
-          }`}
-        >
-          {t("trainingMode")}
-        </button>
-        <button
-          onClick={() => setPracticeMode("exam")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-            practiceMode === "exam" ? ST.pillActive : ST.pillInactive
-          }`}
-          title={t("examModeDesc")}
-        >
-          {t("examMode")}
-        </button>
         <label className={`flex items-center gap-2 text-xs font-semibold cursor-pointer ${ST.themePillLabel}`}>
           <input
             type="checkbox"
