@@ -42,6 +42,17 @@ describe("speechAnalysis", () => {
     expect(trimmed).not.toContain("Disney");
   });
 
+  it("keeps the full exam outro instead of cutting at an early phrase", () => {
+    const trimmed = trimTranscriptAtOutro(sample);
+    expect(trimmed).toContain("that is all I wanted to say");
+    expect(trimmed).toContain("thank you for listening");
+  });
+
+  it("does not trim mid-speech phrases that look like an outro", () => {
+    const raw = "I like school that is all about sports and friends moreover we have clubs";
+    expect(trimTranscriptAtOutro(raw)).toBe(raw);
+  });
+
   it("splits long unpunctuated transcript into sentences", () => {
     const sentences = splitSentencesHeuristic(sample);
     expect(sentences.length).toBeGreaterThan(1);
@@ -72,8 +83,7 @@ describe("speechAnalysis", () => {
   it("analyzes frozen session without post-recording noise", () => {
     const noisy =
       sample + " you know offline Disney owns just she died mama moving chap";
-    const prepared = prepareTranscriptForAnalysis(noisy, 92);
-    const result = analyzeSpeechOffline(prepared, 92, {
+    const result = analyzeSpeechOffline(noisy, 92, {
       pauseEvents: [10, 20, 95],
       fillerTimeline: [
         { second: 8, word: "um" },
@@ -81,9 +91,19 @@ describe("speechAnalysis", () => {
       ],
     });
     expect(result).not.toBeNull();
+    expect(result!.cleanedTranscript).toContain("thank you for listening");
+    expect(result!.cleanedTranscript).not.toContain("Disney");
+    expect(result!.wordCount).toBeGreaterThan(25);
     expect(result!.wordCount).toBeLessThan(50);
     expect(result!.longPauseCount).toBe(2);
     expect(result!.fillerTimeline.every((e) => e.second <= 92)).toBe(true);
+    expect(result!.fillerCount).toBeGreaterThanOrEqual(1);
     expect(result!.sentenceCount).toBeGreaterThan(1);
+    expect(result!.wpm).toBeGreaterThan(0);
+  });
+
+  it("returns null for empty or invalid sessions", () => {
+    expect(analyzeSpeechOffline("", 60)).toBeNull();
+    expect(analyzeSpeechOffline("hello world", 0)).toBeNull();
   });
 });

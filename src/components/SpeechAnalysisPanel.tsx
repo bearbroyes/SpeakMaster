@@ -52,7 +52,6 @@ export function SpeechAnalysisPanel({ ST, t, analysis }: Props) {
         <BarChart3 className={`h-4 w-4 ${ST.iconAccent}`} />
         {t("speechAnalysisTitle")}
       </h4>
-      <p className={`text-[11px] ${ST.workflowSubtitle}`}>{t("speechAnalysisDesc")}</p>
 
       <div className="grid grid-cols-2 gap-2">
         <MetricCard

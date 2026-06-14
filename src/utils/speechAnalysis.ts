@@ -41,7 +41,6 @@ const BUCKET_SIZE_SEC = 10;
 const OUTRO_TRIM_PATTERNS = [
   /\bthank\s+you\s+for\s+(listening|your\s+attention)\b/gi,
   /\bthat\s+is\s+all\s+i\s+wanted\s+to\s+say\b/gi,
-  /\bthat\s+is\s+all\b/gi,
 ];
 
 const GRAMMAR_ERROR_PATTERNS: RegExp[] = [
@@ -123,15 +122,32 @@ export function collapseDuplicateTail(transcript: string): string {
 
 /** Cut off recognition noise captured after the monologue outro. */
 export function trimTranscriptAtOutro(transcript: string): string {
-  let cutIndex = transcript.length;
+  const text = transcript.trim();
+  if (!text) return text;
+
+  const closingStart = Math.max(0, Math.min(Math.floor(text.length * 0.25), text.length - 100));
+  let outroEnd = -1;
+
   for (const pattern of OUTRO_TRIM_PATTERNS) {
     pattern.lastIndex = 0;
+    let lastMatch: RegExpExecArray | null = null;
     let match: RegExpExecArray | null;
-    while ((match = pattern.exec(transcript)) !== null) {
-      cutIndex = Math.min(cutIndex, match.index + match[0].length);
+    while ((match = pattern.exec(text)) !== null) {
+      if (match.index >= closingStart) {
+        lastMatch = match;
+      }
+    }
+    if (lastMatch) {
+      outroEnd = Math.max(outroEnd, lastMatch.index + lastMatch[0].length);
     }
   }
-  return transcript.slice(0, cutIndex).trim();
+
+  if (outroEnd === -1) return text;
+
+  const trailing = text.slice(outroEnd).trim();
+  if (!trailing) return text;
+
+  return text.slice(0, outroEnd).trim();
 }
 
 export function countWords(transcript: string): number {

@@ -104,7 +104,6 @@ export type TranslationKey =
   | "cheatSheet"
   | "coreRubrics"
   | "speechAnalysisTitle"
-  | "speechAnalysisDesc"
   | "metricWords"
   | "metricWordsHint"
   | "metricWpm"
@@ -233,7 +232,6 @@ const en: Record<TranslationKey, string> = {
   cheatSheet: "Exam phrases cheat sheet",
   coreRubrics: "Core rubrics ({count}):",
   speechAnalysisTitle: "Offline speech analysis",
-  speechAnalysisDesc: "Metrics from your recording only — frozen when you stop. No AI required.",
   metricWords: "Words",
   metricWordsHint: "Typical monologue: 100–150 words",
   metricWpm: "Pace (WPM)",
@@ -362,7 +360,6 @@ const ru: Record<TranslationKey, string> = {
   cheatSheet: "Шпаргалка фраз для экзамена",
   coreRubrics: "Пункты плана ({count}):",
   speechAnalysisTitle: "Анализ речи (офлайн)",
-  speechAnalysisDesc: "Метрики только за время записи — фиксируются при остановке. Без ИИ.",
   metricWords: "Слов",
   metricWordsHint: "Обычный монолог: 100–150 слов",
   metricWpm: "Темп (сл/мин)",
