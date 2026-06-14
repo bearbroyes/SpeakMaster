@@ -224,16 +224,12 @@ export function GridDashboard({
         {displayList.map((item, idx) => {
           const status = progress[item.id]?.status ?? "not_started";
           return (
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: Math.min(idx * 0.04, 0.4) }}
-              whileHover={{ y: -6, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <div
               key={item.id}
               id={`monologue_tile_${item.id}`}
               onClick={() => onSelect(item)}
-              className={`group gradient-border-wrap glass-card card-shine ${ST.card} rounded-2xl p-6 flex flex-col justify-between shadow-lg cursor-pointer relative overflow-hidden`}
+              className={`group ${ST.card} rounded-2xl p-6 flex flex-col justify-between cursor-pointer relative overflow-hidden stagger-fade`}
+              style={{ animationDelay: `${Math.min(idx * 40, 480)}ms` }}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => e.key === "Enter" && onSelect(item)}
@@ -272,9 +268,9 @@ export function GridDashboard({
               </div>
               <div className={`mt-4 pt-3 border-t flex items-center justify-between text-xs font-bold ${ST.cardFooter} ${ST.cardDivider}`}>
                 <span>{t("beginTest")}</span>
-                <ChevronRight className="h-4 w-4 group-hover:translate-x-1.5 transition-transform duration-300" />
+                <ChevronRight className="topic-card-chevron h-4 w-4" />
               </div>
-            </motion.div>
+            </div>
           );
         })}
       </div>

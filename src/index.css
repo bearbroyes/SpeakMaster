@@ -121,6 +121,35 @@
     0 0 0 1px rgba(99, 102, 241, 0.12);
 }
 
+/* Grid topic cards — transform-only hover (no blur/shimmer/shadow tween) */
+.topic-card {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: subpixel-antialiased;
+  contain: layout style;
+  transition:
+    transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.16s ease,
+    background-color 0.16s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .topic-card:hover {
+    transform: translate3d(0, -5px, 0) scale(1.018);
+  }
+  .topic-card:active {
+    transform: translate3d(0, -1px, 0) scale(0.992);
+    transition-duration: 0.08s;
+  }
+  .topic-card:hover .topic-card-chevron {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+.topic-card-chevron {
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
 .gradient-border-wrap {
   position: relative;
   border-radius: inherit;
@@ -322,4 +351,12 @@
     animation: none !important;
   }
   .glass-card:hover { transform: none; }
+  .topic-card,
+  .topic-card-chevron {
+    transition: none !important;
+  }
+  .topic-card:hover,
+  .topic-card:active {
+    transform: none;
+  }
 }
