@@ -19,6 +19,7 @@ import { buildRecordingFilename } from "../utils/filename";
 import { analyzeSpeechOffline } from "../utils/speechAnalysis";
 import type { SpeechSessionSnapshot } from "../hooks/useSpeechRecognition";
 import { SpeechAnalysisPanel } from "./SpeechAnalysisPanel";
+import { MonologueTranscriptPanel } from "./MonologueTranscriptPanel";
 
 interface Props {
   ST: ThemeStyles;
@@ -127,6 +128,15 @@ export function ResultPhase({
         </div>
       </div>
 
+      <MonologueTranscriptPanel
+        ST={ST}
+        t={t}
+        transcript={displayTranscript}
+        fillerCount={displayFillerCount}
+        fillerBreakdown={speechAnalysis?.fillerBreakdown ?? []}
+        durationSeconds={recordingDurationSeconds}
+      />
+
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
         <div className={`gradient-border-wrap md:col-span-5 rounded-3xl p-6 sm:p-8 shadow-xl border space-y-6 card-shine ${ST.workflowCard}`}>
           <div className={`flex items-center gap-2 border-b pb-4 ${ST.cardDivider}`}>
@@ -145,30 +155,6 @@ export function ResultPhase({
               <p>{t("playbackOffline")}</p>
             </div>
           )}
-
-          <div className={`rounded-2xl p-4 border text-xs space-y-2 ${ST.aspectItem}`}>
-            <h4 className={`font-bold ${ST.aspectLabel}`}>{t("transcript")}</h4>
-            {displayTranscript ? (
-              <>
-                <p className={`leading-relaxed ${ST.workflowSubtitle}`}>{displayTranscript}</p>
-                <p className={`${ST.fillerText} font-mono`}>{t("fillerWords", { count: displayFillerCount })}</p>
-                {speechAnalysis && speechAnalysis.fillerBreakdown.length > 0 && (
-                  <div className="flex flex-wrap gap-1 pt-1">
-                    {speechAnalysis.fillerBreakdown.map((item) => (
-                      <span
-                        key={item.word}
-                        className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${ST.warningBadge}`}
-                      >
-                        {item.word} ×{item.count}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <p className={ST.workflowSubtitle}>{t("transcriptEmpty")}</p>
-            )}
-          </div>
 
           {speechAnalysis && <SpeechAnalysisPanel ST={ST} t={t} analysis={speechAnalysis} />}
 

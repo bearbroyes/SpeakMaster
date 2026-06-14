@@ -94,6 +94,9 @@ export type TranslationKey =
   | "attemptHistory"
   | "transcript"
   | "transcriptEmpty"
+  | "spokenWordsTitle"
+  | "spokenWordsDesc"
+  | "spokenWordsStats"
   | "liveTranscript"
   | "liveTranscriptWaiting"
   | "speechUnsupported"
@@ -220,6 +223,9 @@ const en: Record<TranslationKey, string> = {
   attemptHistory: "Attempt history",
   transcript: "Speech transcript",
   transcriptEmpty: "Speech was not recognized. Use Chrome or Edge with microphone access, speak clearly in English.",
+  spokenWordsTitle: "Your spoken words",
+  spokenWordsDesc: "Everything you said during the recording — sentence by sentence.",
+  spokenWordsStats: "{words} words · {sec}s",
   liveTranscript: "Live transcript",
   liveTranscriptWaiting: "Listening… speak in English",
   speechUnsupported: "Speech recognition is not available in this browser. Use Chrome or Edge.",
@@ -346,6 +352,9 @@ const ru: Record<TranslationKey, string> = {
   attemptHistory: "История попыток",
   transcript: "Транскрипт речи",
   transcriptEmpty: "Речь не распознана. Используйте Chrome или Edge с доступом к микрофону и говорите чётко по-английски.",
+  spokenWordsTitle: "Текст вашего монолога",
+  spokenWordsDesc: "Все слова, которые вы произнесли во время записи — по предложениям.",
+  spokenWordsStats: "{words} слов · {sec} с",
   liveTranscript: "Транскрипт в реальном времени",
   liveTranscriptWaiting: "Слушаю… говорите по-английски",
   speechUnsupported: "Распознавание речи недоступно в этом браузере. Используйте Chrome или Edge.",

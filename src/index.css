@@ -261,6 +261,39 @@
 }
 .hero-badge-pulse { animation: badge-pulse-ring 2.5s ease-out infinite; }
 
+/* ─── Spoken transcript panel ─── */
+.transcript-sentences {
+  max-height: min(420px, 55vh);
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding-right: 4px;
+}
+.transcript-sentences::-webkit-scrollbar {
+  width: 6px;
+}
+.transcript-sentences::-webkit-scrollbar-track {
+  background: transparent;
+}
+.transcript-sentences::-webkit-scrollbar-thumb {
+  background: rgba(129, 140, 248, 0.35);
+  border-radius: 999px;
+}
+.theme-light .transcript-sentences::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.25);
+}
+.transcript-sentence {
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+.transcript-sentence:hover {
+  border-color: rgba(129, 140, 248, 0.35);
+}
+.theme-light .transcript-sentence:hover {
+  border-color: rgba(99, 102, 241, 0.25);
+}
+.transcript-empty {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.04), transparent 55%);
+}
+
 /* ─── Step cards hover ─── */
 .step-card {
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease;
