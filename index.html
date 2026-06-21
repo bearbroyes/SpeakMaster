@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function (regs) {
+          regs.forEach(function (r) {
+            r.unregister();
+          });
+        });
+        if (window.caches) {
+          caches.keys().then(function (keys) {
+            keys.forEach(function (key) {
+              caches.delete(key);
+            });
+          });
+        }
+      }
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SpeakMasterPro - Rehearsal Deck</title>
+    <link rel="manifest" href="/SpeakMaster/manifest.json" />
+    <meta name="theme-color" content="#6366f1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #0d0f17;
+        font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        color: #f8fafc;
+        overflow: hidden;
+      }
+
+      .gatekeeper-hidden { display: none !important; }
+
+      @keyframes gk-orb-a {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(24px, -32px) scale(1.06); }
+      }
+      @keyframes gk-orb-b {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(-28px, 20px) scale(1.05); }
+      }
+      @keyframes gk-card-in {
+        from { opacity: 0; transform: translateY(20px) scale(0.97); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      @keyframes gk-shake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-8px); }
+        40% { transform: translateX(8px); }
+        60% { transform: translateX(-5px); }
+        80% { transform: translateX(5px); }
+      }
+      @keyframes gk-spin {
+        to { transform: rotate(360deg); }
+      }
+      @keyframes gk-success-pulse {
+        0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5); }
+        70% { box-shadow: 0 0 0 14px rgba(52, 211, 153, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+      }
+      @keyframes gk-logo-glow {
+        0%, 100% { box-shadow: 0 10px 28px rgba(99, 102, 241, 0.35); }
+        50% { box-shadow: 0 14px 36px rgba(168, 85, 247, 0.45); }
+      }
+
+      #gatekeeper-overlay {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(ellipse 90% 70% at 50% 30%, #1e1b4b 0%, #0d0f17 55%, #07040f 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999999;
+        transition: opacity 0.45s ease-out, visibility 0.45s ease-out;
+        padding: 1.25rem;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+
+      .gk-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(72px);
+        pointer-events: none;
+      }
+      .gk-orb-1 {
+        width: min(440px, 65vw);
+        height: min(440px, 65vw);
+        top: -10%;
+        right: -6%;
+        background: rgba(99, 102, 241, 0.32);
+        animation: gk-orb-a 20s ease-in-out infinite;
+      }
+      .gk-orb-2 {
+        width: min(360px, 55vw);
+        height: min(360px, 55vw);
+        bottom: -8%;
+        left: -10%;
+        background: rgba(168, 85, 247, 0.22);
+        animation: gk-orb-b 24s ease-in-out infinite;
+      }
+
+      .lock-card {
+        position: relative;
+        background: rgba(15, 23, 42, 0.55);
+        border: 1px solid rgba(129, 140, 248, 0.18);
+        backdrop-filter: blur(22px) saturate(1.3);
+        -webkit-backdrop-filter: blur(22px) saturate(1.3);
+        padding: 2rem 1.75rem 1.75rem;
+        border-radius: 28px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 28px 64px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        text-align: center;
+        box-sizing: border-box;
+        animation: gk-card-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+      }
+      .lock-card.shake { animation: gk-shake 0.45s ease; }
+      .lock-card.unlocking .lock-icon-container {
+        background: linear-gradient(135deg, #10b981, #34d399);
+        animation: gk-success-pulse 0.8s ease;
+      }
+
+      .lock-icon-container {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.25rem;
+        animation: gk-logo-glow 3s ease-in-out infinite;
+        transition: background 0.35s ease;
+      }
+
+      .lock-brand {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #818cf8;
+        margin: 0 0 0.35rem;
+      }
+
+      .lock-title {
+        font-size: 1.55rem;
+        font-weight: 800;
+        margin: 0 0 0.4rem;
+        letter-spacing: -0.03em;
+        background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 45%, #e879f9 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .lock-subtitle {
+        font-size: 0.84rem;
+        color: #94a3b8;
+        margin: 0 0 1.5rem;
+        line-height: 1.55;
+        font-weight: 500;
+      }
+
+      .key-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .key-dots {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+        margin-bottom: 0.65rem;
+      }
+      .key-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(129, 140, 248, 0.15);
+        transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+      }
+      .key-dot.filled {
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        border-color: transparent;
+        transform: scale(1.1);
+      }
+
+      .input-wrapper { margin-bottom: 0.5rem; }
+
+      .input-field {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .input-icon-left {
+        position: absolute;
+        left: 14px;
+        top: 0;
+        bottom: 0;
+        margin: auto 0;
+        height: 18px;
+        color: #64748b;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        z-index: 1;
+      }
+
+      .pass-input {
+        width: 100%;
+        padding: 14px 108px 14px 44px;
+        background: rgba(15, 23, 42, 0.75);
+        border: 1.5px solid rgba(129, 140, 248, 0.2);
+        border-radius: 16px;
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 600;
+        font-family: inherit;
+        outline: none;
+        box-sizing: border-box;
+        letter-spacing: 0.06em;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      }
+      .pass-input::placeholder { color: #475569; font-weight: 500; letter-spacing: 0.02em; }
+      .pass-input:focus {
+        border-color: #818cf8;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+        background: rgba(15, 23, 42, 0.92);
+      }
+      .pass-input.error { border-color: #f87171; box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.15); }
+
+      .input-actions {
+        position: absolute;
+        right: 8px;
+        top: 0;
+        bottom: 0;
+        margin: auto 0;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        z-index: 1;
+      }
+
+      .icon-btn {
+        background: rgba(255, 255, 255, 0.04);
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: color 0.15s ease, background 0.15s ease;
+      }
+      .icon-btn:hover { color: #e2e8f0; background: rgba(255, 255, 255, 0.08); }
+      .icon-btn:active { transform: scale(0.94); }
+      .icon-btn.copied { color: #34d399; }
+
+      .error-msg {
+        color: #fca5a5;
+        font-size: 0.78rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+        min-height: 1.2rem;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+      }
+      .error-msg.visible { opacity: 1; transform: translateY(0); }
+
+      .remember-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin: 1rem 0 0;
+        font-size: 0.78rem;
+        color: #94a3b8;
+        cursor: pointer;
+        user-select: none;
+      }
+      .remember-row span { font-weight: 600; }
+
+      .toggle-switch {
+        position: relative;
+        width: 42px;
+        height: 24px;
+        flex-shrink: 0;
+      }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        position: absolute;
+      }
+      .toggle-slider {
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 999px;
+        transition: background 0.25s ease;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .toggle-slider::before {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        left: 2px;
+        top: 2px;
+        background: #94a3b8;
+        border-radius: 50%;
+        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s ease;
+      }
+      .toggle-switch input:checked + .toggle-slider {
+        background: rgba(99, 102, 241, 0.45);
+        border-color: rgba(129, 140, 248, 0.35);
+      }
+      .toggle-switch input:checked + .toggle-slider::before {
+        transform: translateX(18px);
+        background: #fff;
+      }
+
+      .submit-btn {
+        width: 100%;
+        margin-top: 1.1rem;
+        padding: 14px 24px;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 55%, #6366f1 100%);
+        border: none;
+        border-radius: 16px;
+        color: #ffffff;
+        font-size: 0.95rem;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        transition: transform 0.15s ease, filter 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      .submit-btn:hover:not(:disabled) {
+        filter: brightness(1.08);
+        box-shadow: 0 8px 26px rgba(79, 70, 229, 0.45);
+      }
+      .submit-btn:active:not(:disabled) { transform: scale(0.98); }
+      .submit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+      .submit-btn .btn-spinner {
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: gk-spin 0.7s linear infinite;
+        display: none;
+      }
+      .submit-btn.loading .btn-spinner { display: block; }
+      .submit-btn.loading .btn-label { opacity: 0.85; }
+
+      .hint-row {
+        margin-top: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .hint-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.4rem 0.7rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        line-height: 1;
+      }
+      .hint-kbd {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 4.5rem;
+        padding: 0.28rem 0.5rem;
+        border-radius: 8px;
+        background: rgba(15, 23, 42, 0.65);
+        border: 1px solid rgba(129, 140, 248, 0.2);
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #94a3b8;
+        white-space: nowrap;
+      }
+      .hint-text {
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: #64748b;
+        white-space: nowrap;
+      }
+
+      .share-block {
+        margin-top: 1.35rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.07);
+      }
+      .share-title {
+        font-size: 0.7rem;
+        color: #64748b;
+        margin: 0 0 0.85rem;
+        font-weight: 600;
+      }
+      .share-row {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        align-items: stretch;
+        justify-content: center;
+        gap: 0.65rem;
+        max-width: 300px;
+        margin: 0 auto;
+      }
+      #qr_code {
+        width: 120px;
+        height: 120px;
+        border-radius: 14px;
+        background: #fff;
+        padding: 6px;
+        box-sizing: border-box;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        display: block;
+      }
+      .copy-link-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        min-height: 120px;
+        padding: 0.75rem 0.85rem;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(129, 140, 248, 0.2);
+        color: #94a3b8;
+        font-size: 0.72rem;
+        font-weight: 700;
+        font-family: inherit;
+        line-height: 1.35;
+        text-align: center;
+        cursor: pointer;
+        transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      }
+      .copy-link-btn:hover { background: rgba(99, 102, 241, 0.15); color: #c7d2fe; border-color: rgba(129, 140, 248, 0.35); }
+      .copy-link-btn.ok { color: #34d399; border-color: rgba(52, 211, 153, 0.35); }
+
+      @media (max-width: 360px) {
+        .share-row {
+          grid-template-columns: 1fr;
+          max-width: 200px;
+        }
+        #qr_code { margin: 0 auto; }
+        .copy-link-btn { min-height: auto; flex-direction: row; padding: 0.65rem 1rem; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .gk-orb, .lock-card, .lock-icon-container, .submit-btn .btn-spinner { animation: none !important; }
+      }
+    </style>
+    <script type="module" crossorigin src="/SpeakMaster/assets/index-kGIwXbsR.js"></script>
+    <link rel="stylesheet" crossorigin href="/SpeakMaster/assets/index-B6FhyZ7O.css">
+  </head>
+  <body>
+    <!-- Access Control Gatekeeper -->
+    <div id="gatekeeper-overlay">
+      <div class="gk-orb gk-orb-1" aria-hidden="true"></div>
+      <div class="gk-orb gk-orb-2" aria-hidden="true"></div>
+
+      <div id="gatekeeper_card" class="lock-card">
+        <div class="lock-icon-container" id="lock_icon_box">
+          <svg id="lock_icon_lock" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <svg id="lock_icon_ok" class="gatekeeper-hidden" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <p class="lock-brand">SpeakMasterPro</p>
+        <h2 class="lock-title">Ключ доступа</h2>
+        <p class="lock-subtitle">Введите ключ от учителя, чтобы открыть тренажёр монологов ОГЭ</p>
+
+        <div class="key-label">
+          <span>Секретный ключ</span>
+          <span id="key_length_hint">0 символов</span>
+        </div>
+        <div class="key-dots" id="key_dots" aria-hidden="true"></div>
+        
+        <div class="input-wrapper">
+          <div class="input-field">
+            <span class="input-icon-left" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg>
+            </span>
+            <input type="password" id="pass_field_input" class="pass-input" placeholder="Вставьте или введите ключ" autocomplete="off" spellcheck="false" autofocus />
+            <div class="input-actions">
+              <button type="button" id="paste_key_btn" class="icon-btn" title="Вставить из буфера" aria-label="Вставить из буфера">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+              </button>
+              <button type="button" id="clear_key_btn" class="icon-btn gatekeeper-hidden" title="Очистить" aria-label="Очистить поле">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              </button>
+              <button type="button" id="toggle_password_btn" class="icon-btn" aria-label="Показать или скрыть ключ">
+                <svg id="eye_icon_show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg id="eye_icon_hide" class="gatekeeper-hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+              </button>
+            </div>
+          </div>
+          <div id="error_container" class="error-msg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+            <span id="error_text">Неверный ключ. Попробуйте ещё раз.</span>
+          </div>
+        </div>
+        
+        <label class="remember-row" for="remember_session">
+          <span>Запомнить на этом устройстве</span>
+          <span class="toggle-switch">
+            <input type="checkbox" id="remember_session" checked />
+            <span class="toggle-slider"></span>
+          </span>
+        </label>
+
+        <button id="gatekeeper_submit_btn" class="submit-btn" type="button" disabled>
+          <span class="btn-spinner" aria-hidden="true"></span>
+          <span class="btn-label">Войти в тренажёр</span>
+        </button>
+
+        <div class="hint-row">
+          <div class="hint-chip">
+            <span class="hint-kbd">Enter ↵</span>
+            <span class="hint-text">быстрый вход</span>
+          </div>
+          <div class="hint-chip">
+            <span class="hint-kbd">Ctrl+V</span>
+            <span class="hint-text">вставить ключ</span>
+          </div>
+        </div>
+
+        <div class="share-block">
+          <p class="share-title">Открыть на телефоне</p>
+          <div class="share-row">
+            <img id="qr_code" alt="QR-код ссылки на сайт" width="108" height="108" loading="lazy" />
+            <button type="button" id="copy_link_btn" class="copy-link-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              <span id="copy_link_label">Скопировать ссылку</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- React App Root Container -->
+    <div id="root" class="gatekeeper-hidden"></div>
+
+    <script>
+      const ENV_CODE = "Oge_Monolog_012";
+      const SECRET_KEY =
+        !ENV_CODE || ENV_CODE.startsWith("%") ? "Oge_Monolog_012" : ENV_CODE;
+      const SESSION_KEY = "speakmaster_access";
+      const MAX_DOTS = SECRET_KEY.length;
+
+      const overlay = document.getElementById("gatekeeper-overlay");
+      const rootContainer = document.getElementById("root");
+      const card = document.getElementById("gatekeeper_card");
+      const input = document.getElementById("pass_field_input");
+      const button = document.getElementById("gatekeeper_submit_btn");
+      const errorLabel = document.getElementById("error_container");
+      const rememberCheckbox = document.getElementById("remember_session");
+      const qrImg = document.getElementById("qr_code");
+      const keyDots = document.getElementById("key_dots");
+      const keyLengthHint = document.getElementById("key_length_hint");
+      const clearBtn = document.getElementById("clear_key_btn");
+      const pasteBtn = document.getElementById("paste_key_btn");
+      const copyLinkBtn = document.getElementById("copy_link_btn");
+      const copyLinkLabel = document.getElementById("copy_link_label");
+      const lockIconLock = document.getElementById("lock_icon_lock");
+      const lockIconOk = document.getElementById("lock_icon_ok");
+      const pageUrl = window.location.href.split("#")[0];
+      let isUnlocking = false;
+
+      if (input) input.maxLength = MAX_DOTS;
+
+      document.body.style.overflow = "hidden";
+
+      for (let i = 0; i < MAX_DOTS; i++) {
+        const dot = document.createElement("span");
+        dot.className = "key-dot";
+        keyDots.appendChild(dot);
+      }
+
+      if (qrImg) {
+        qrImg.src =
+          "https://api.qrserver.com/v1/create-qr-code/?size=108x108&data=" +
+          encodeURIComponent(pageUrl);
+      }
+
+      function pluralChars(n) {
+        const mod10 = n % 10;
+        const mod100 = n % 100;
+        if (mod10 === 1 && mod100 !== 11) return "символ";
+        if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return "символа";
+        return "символов";
+      }
+
+      function updateKeyUi() {
+        const len = input.value.length;
+        keyLengthHint.textContent = len + " " + pluralChars(len);
+        button.disabled = len === 0 || isUnlocking;
+        clearBtn.classList.toggle("gatekeeper-hidden", len === 0);
+        keyDots.querySelectorAll(".key-dot").forEach((dot, i) => {
+          dot.classList.toggle("filled", i < Math.min(len, MAX_DOTS));
+        });
+      }
+
+      function clearError() {
+        errorLabel.classList.remove("visible");
+        input.classList.remove("error");
+      }
+
+      function showError(text) {
+        const errorText = document.getElementById("error_text");
+        if (errorText) errorText.textContent = text;
+        errorLabel.classList.add("visible");
+        input.classList.add("error");
+        card.classList.remove("shake");
+        void card.offsetWidth;
+        card.classList.add("shake");
+      }
+
+      function bypassLockScreen() {
+        if (!window.__APP_READY__) return;
+        overlay.style.opacity = "0";
+        overlay.style.visibility = "hidden";
+        rootContainer.classList.remove("gatekeeper-hidden");
+        document.body.style.overflow = "auto";
+        setTimeout(() => overlay.remove(), 500);
+      }
+
+      function showBootFailure() {
+        const card = document.getElementById("gatekeeper_card");
+        if (!card || card.querySelector("#boot_error_msg")) return;
+        const msg = document.createElement("p");
+        msg.id = "boot_error_msg";
+        msg.style.cssText =
+          "margin-top:1rem;padding:0.75rem;border-radius:12px;background:rgba(248,113,113,0.15);color:#fca5a5;font-size:0.8rem;line-height:1.4;";
+        msg.textContent =
+          "Не удалось загрузить приложение. Нажмите Ctrl+F5 (жёсткое обновление) или откройте сайт в режиме инкогнито.";
+        card.appendChild(msg);
+      }
+
+      function requestUnlock() {
+        if (window.__APP_READY__) {
+          bypassLockScreen();
+          return;
+        }
+        document.addEventListener("speakmaster:ready", bypassLockScreen, { once: true });
+        setTimeout(() => {
+          if (!window.__APP_READY__) showBootFailure();
+        }, 12000);
+      }
+
+      if (sessionStorage.getItem(SESSION_KEY) === "ok") {
+        requestUnlock();
+      }
+
+      function startUnlockAnimation() {
+        isUnlocking = true;
+        button.disabled = true;
+        button.classList.add("loading");
+        card.classList.add("unlocking");
+        lockIconLock.classList.add("gatekeeper-hidden");
+        lockIconOk.classList.remove("gatekeeper-hidden");
+        document.querySelector(".btn-label").textContent = "Открываем…";
+      }
+
+      function handleAuthentication() {
+        if (isUnlocking) return;
+        const value = input.value.trim();
+        if (!value) return;
+
+        if (value === SECRET_KEY) {
+          if (rememberCheckbox && rememberCheckbox.checked) {
+            sessionStorage.setItem(SESSION_KEY, "ok");
+          }
+          startUnlockAnimation();
+          setTimeout(requestUnlock, 650);
+        } else {
+          showError("Неверный ключ. Попробуйте ещё раз.");
+          input.select();
+        }
+      }
+
+      async function pasteFromClipboard() {
+        try {
+          const text = await navigator.clipboard.readText();
+          if (text) {
+            input.value = text.trim();
+            updateKeyUi();
+            clearError();
+            if (input.value === SECRET_KEY) handleAuthentication();
+          }
+        } catch {
+          showError("Не удалось вставить — разрешите доступ к буферу.");
+        }
+      }
+
+      input.addEventListener("input", () => {
+        updateKeyUi();
+        clearError();
+      });
+
+      input.addEventListener("paste", () => {
+        setTimeout(() => {
+          updateKeyUi();
+          if (input.value.trim() === SECRET_KEY) handleAuthentication();
+        }, 0);
+      });
+
+      button.addEventListener("click", handleAuthentication);
+
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") handleAuthentication();
+      });
+
+      pasteBtn.addEventListener("click", pasteFromClipboard);
+
+      clearBtn.addEventListener("click", () => {
+        input.value = "";
+        updateKeyUi();
+        clearError();
+        input.focus();
+      });
+
+      const togglePasswordBtn = document.getElementById("toggle_password_btn");
+      const eyeIconShow = document.getElementById("eye_icon_show");
+      const eyeIconHide = document.getElementById("eye_icon_hide");
+
+      togglePasswordBtn.addEventListener("click", () => {
+        if (input.type === "password") {
+          input.type = "text";
+          eyeIconShow.classList.add("gatekeeper-hidden");
+          eyeIconHide.classList.remove("gatekeeper-hidden");
+        } else {
+          input.type = "password";
+          eyeIconShow.classList.remove("gatekeeper-hidden");
+          eyeIconHide.classList.add("gatekeeper-hidden");
+        }
+      });
+
+      copyLinkBtn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(pageUrl);
+          copyLinkBtn.classList.add("ok");
+          copyLinkLabel.textContent = "Ссылка скопирована!";
+          setTimeout(() => {
+            copyLinkBtn.classList.remove("ok");
+            copyLinkLabel.textContent = "Скопировать ссылку";
+          }, 2000);
+        } catch {
+          copyLinkLabel.textContent = "Ошибка копирования";
+        }
+      });
+
+      updateKeyUi();
+    </script>
+  </body>
+</html>
+

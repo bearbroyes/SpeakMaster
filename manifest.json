@@ -1,0 +1,9 @@
+{
+  "name": "SpeakMasterPro",
+  "short_name": "SpeakMaster",
+  "description": "OGE English monologue practice trainer",
+  "start_url": "/SpeakMaster/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#6366f1"
+}
