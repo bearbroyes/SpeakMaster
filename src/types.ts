@@ -6,6 +6,11 @@ export type PracticeMode = "training" | "exam";
 
 export type Lang = "ru" | "en";
 
+export interface StudentProfile {
+  firstName: string;
+  lastName: string;
+}
+
 export type TopicStatus = "not_started" | "recorded" | "submitted";
 
 export interface Monologue {

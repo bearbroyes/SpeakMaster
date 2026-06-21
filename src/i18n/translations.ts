@@ -75,8 +75,18 @@ export type TranslationKey =
   | "studentProfileTitle"
   | "studentProfileDesc"
   | "fullName"
+  | "firstName"
+  | "lastName"
+  | "firstNamePlaceholder"
+  | "lastNamePlaceholder"
+  | "profileButton"
+  | "closeProfile"
+  | "clearProfile"
   | "classGroup"
   | "saveProfile"
+  | "introTagline"
+  | "introContinue"
+  | "introAutoHint"
   | "skipProfile"
   | "submitToTeacher"
   | "submitInstructions"
@@ -200,10 +210,21 @@ const en: Record<TranslationKey, string> = {
   chooseDifferent: "Choose Different Topic",
   footer: "Designed for Exam Preparation · Frosted Glass Studio · © 2026",
   studentProfileTitle: "Student Profile",
-  studentProfileDesc: "Enter your name and class so the teacher can identify your recording.",
+  studentProfileDesc: "Your name will be added to recording filenames for your teacher.",
   fullName: "Full Name (ФИО)",
+  firstName: "First name",
+  lastName: "Last name",
+  firstNamePlaceholder: "e.g. Ivan",
+  lastNamePlaceholder: "e.g. Petrov",
+  profileButton: "Profile",
+  closeProfile: "Close",
+  clearProfile: "Clear profile",
   classGroup: "Class / Group",
-  saveProfile: "Save & Continue",
+  saveProfile: "Save",
+  introTagline:
+    "The smartest OGE monologue trainer — not just recording, but speech analysis, progress tracking, and exam-style mode.",
+  introContinue: "Continue",
+  introAutoHint: "Auto-continue in {sec}s",
   skipProfile: "Skip",
   submitToTeacher: "Send to Teacher",
   submitInstructions:
@@ -328,10 +349,21 @@ const ru: Record<TranslationKey, string> = {
   chooseDifferent: "Выбрать другую тему",
   footer: "Подготовка к ОГЭ · Frosted Glass Studio · © 2026",
   studentProfileTitle: "Профиль ученика",
-  studentProfileDesc: "Введите ФИО и класс — учитель сможет найти вашу запись.",
+  studentProfileDesc: "Имя будет добавлено в название файла записи для учителя.",
   fullName: "ФИО",
+  firstName: "Имя",
+  lastName: "Фамилия",
+  firstNamePlaceholder: "Например, Иван",
+  lastNamePlaceholder: "Например, Петров",
+  profileButton: "Профиль",
+  closeProfile: "Закрыть",
+  clearProfile: "Очистить профиль",
   classGroup: "Класс / группа",
-  saveProfile: "Сохранить и продолжить",
+  saveProfile: "Сохранить",
+  introTagline:
+    "Самый умный тренажёр монologa ОГЭ — не просто запись, а анализ речи, прогресс и режим «как на экзамене».",
+  introContinue: "Далее",
+  introAutoHint: "Автопереход через {sec} с",
   skipProfile: "Пропустить",
   submitToTeacher: "Отправить учителю",
   submitInstructions:

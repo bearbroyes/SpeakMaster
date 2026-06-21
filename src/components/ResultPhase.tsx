@@ -12,7 +12,7 @@ import {
   FileAudio,
   Share2,
 } from "lucide-react";
-import type { Monologue, RubricAnswers, TopicProgress } from "../types";
+import type { Monologue, RubricAnswers, TopicProgress, StudentProfile } from "../types";
 import type { ThemeStyles } from "../themes";
 import type { TranslationKey } from "../i18n/translations";
 import { buildRecordingFilename } from "../utils/filename";
@@ -25,6 +25,7 @@ interface Props {
   ST: ThemeStyles;
   t: (key: TranslationKey, vars?: Record<string, string | number>) => string;
   monologue: Monologue;
+  profile: StudentProfile | null;
   audioUrl: string | null;
   recordingBlob: Blob | null;
   rubricAnswers: RubricAnswers;
@@ -42,6 +43,7 @@ export function ResultPhase({
   ST,
   t,
   monologue,
+  profile,
   audioUrl,
   recordingBlob,
   rubricAnswers,
@@ -55,7 +57,7 @@ export function ResultPhase({
   onBack,
 }: Props) {
   const filename = recordingBlob
-    ? buildRecordingFilename(monologue, recordingBlob.type)
+    ? buildRecordingFilename(monologue, recordingBlob.type, profile)
     : `Monologue_${monologue.id.toString().padStart(2, "0")}`;
 
   const speechAnalysis = useMemo(

@@ -360,3 +360,47 @@
     transform: none;
   }
 }
+
+/* ─── Intro splash ─── */
+@keyframes intro-logo-glow {
+  0%, 100% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.35), 0 0 80px rgba(139, 92, 246, 0.15); }
+  50% { box-shadow: 0 0 56px rgba(99, 102, 241, 0.55), 0 0 100px rgba(236, 72, 153, 0.2); }
+}
+.intro-logo-wrap {
+  animation: intro-logo-glow 3s ease-in-out infinite;
+}
+.intro-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.45;
+}
+.intro-orb-1 {
+  width: 420px;
+  height: 420px;
+  top: -10%;
+  right: -5%;
+  background: rgba(99, 102, 241, 0.35);
+  animation: orb-float-a 16s ease-in-out infinite;
+}
+.intro-orb-2 {
+  width: 360px;
+  height: 360px;
+  bottom: -8%;
+  left: -10%;
+  background: rgba(168, 85, 247, 0.28);
+  animation: orb-float-b 20s ease-in-out infinite;
+}
+.intro-continue-btn {
+  isolation: isolate;
+}
+.intro-continue-fill {
+  transition: width 0.1s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-logo-wrap,
+  .intro-orb {
+    animation: none !important;
+  }
+}

@@ -1,9 +1,10 @@
 import { motion } from "motion/react";
-import { MicOff } from "lucide-react";
+import { MicOff, User } from "lucide-react";
 import type { ThemeStyles } from "../themes";
 import { ThemeSwitcher } from "./ThemeSwitcher";
-import type { Theme, Lang } from "../types";
+import type { Theme, Lang, StudentProfile } from "../types";
 import type { TranslationKey } from "../i18n/translations";
+import { hasProfileName } from "../utils/profile";
 
 interface Props {
   ST: ThemeStyles;
@@ -14,6 +15,8 @@ interface Props {
   micPermission: "granted" | "denied" | "prompt" | "unknown";
   onRequestMic: () => void;
   onBack: () => void;
+  onOpenProfile: () => void;
+  profile: StudentProfile | null;
   t: (key: TranslationKey, vars?: Record<string, string | number>) => string;
 }
 
@@ -26,6 +29,8 @@ export function Header({
   micPermission,
   onRequestMic,
   onBack,
+  onOpenProfile,
+  profile,
   t,
 }: Props) {
   return (
@@ -73,7 +78,24 @@ export function Header({
         </div>
       </motion.div>
 
-      <div className="flex items-center gap-3 sm:gap-5">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <button
+          type="button"
+          id="header_profile_btn"
+          onClick={onOpenProfile}
+          className={`relative flex items-center gap-2 px-3 py-2 rounded-full text-xs font-bold cursor-pointer border transition-all ${ST.langBtn}`}
+          aria-label={t("profileButton")}
+        >
+          <User className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="hidden sm:inline">{t("profileButton")}</span>
+          {hasProfileName(profile) && (
+            <span
+              className={`absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-slate-900 ${ST.micDot}`}
+              aria-hidden="true"
+            />
+          )}
+        </button>
+
         <ThemeSwitcher theme={theme} setTheme={setTheme} lang={lang} setLang={setLang} ST={ST} />
 
         {micPermission === "granted" ? (

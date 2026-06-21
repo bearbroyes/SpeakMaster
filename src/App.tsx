@@ -21,6 +21,9 @@ import { BufferPhase } from "./components/BufferPhase";
 import { RecordingPhase } from "./components/RecordingPhase";
 import { ResultPhase } from "./components/ResultPhase";
 import { AmbientBackground } from "./components/AmbientBackground";
+import { IntroSplash, shouldShowIntro } from "./components/IntroSplash";
+import { StudentProfileModal } from "./components/StudentProfileModal";
+import { useStudentProfile } from "./hooks/useStudentProfile";
 import {
   loadAllProgress,
   recordAttempt,
@@ -33,6 +36,10 @@ import type { TopicProgress } from "./types";
 export default function App() {
   const { theme, setTheme, ST } = useTheme();
   const { lang, setLang, t } = useI18n();
+  const { profile, updateProfile } = useStudentProfile();
+
+  const [showIntro, setShowIntro] = useState(shouldShowIntro);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const [activeMonologue, setActiveMonologue] = useState<Monologue | null>(null);
   const [phase, setPhase] = useState<Phase>("GRID");
@@ -248,9 +255,14 @@ export default function App() {
 
   const handleShare = async () => {
     if (!recording.recordingBlob || !activeMonologue) return;
-    const shared = await shareRecording(recording.recordingBlob, activeMonologue, t("shareViaPhone"));
+    const shared = await shareRecording(
+      recording.recordingBlob,
+      activeMonologue,
+      t("shareViaPhone"),
+      profile
+    );
     if (!shared) {
-      triggerDownload(recording.recordingBlob, activeMonologue);
+      triggerDownload(recording.recordingBlob, activeMonologue, profile);
     }
   };
 
@@ -292,8 +304,25 @@ export default function App() {
         micPermission={recording.micPermission}
         onRequestMic={recording.requestMicAccess}
         onBack={handleBackToDashboard}
+        onOpenProfile={() => setProfileOpen(true)}
+        profile={profile}
         t={t}
       />
+
+      <StudentProfileModal
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        profile={profile}
+        onSave={updateProfile}
+        ST={ST}
+        t={t}
+      />
+
+      <AnimatePresence>
+        {showIntro && (
+          <IntroSplash ST={ST} t={t} onComplete={() => setShowIntro(false)} />
+        )}
+      </AnimatePresence>
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col justify-center z-10">
         <AnimatePresence mode="wait">
@@ -351,6 +380,7 @@ export default function App() {
               ST={ST}
               t={t}
               monologue={activeMonologue}
+              profile={profile}
               audioUrl={recording.audioUrl}
               recordingBlob={recording.recordingBlob}
               rubricAnswers={rubricAnswers}
@@ -359,7 +389,8 @@ export default function App() {
               speechSnapshot={speech.sessionSnapshot}
               recordingDurationSeconds={lastRecordingDuration}
               onDownload={() =>
-                recording.recordingBlob && triggerDownload(recording.recordingBlob, activeMonologue)
+                recording.recordingBlob &&
+                triggerDownload(recording.recordingBlob, activeMonologue, profile)
               }
               onShare={handleShare}
               onRetry={handleRetrySameTopic}

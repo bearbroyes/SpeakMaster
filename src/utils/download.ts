@@ -1,8 +1,12 @@
 import { buildRecordingFilename } from "./filename";
-import type { Monologue } from "../types";
+import type { Monologue, StudentProfile } from "../types";
 
-export function triggerDownload(blob: Blob, monologue: Monologue): string {
-  const filename = buildRecordingFilename(monologue, blob.type);
+export function triggerDownload(
+  blob: Blob,
+  monologue: Monologue,
+  profile?: StudentProfile | null
+): string {
+  const filename = buildRecordingFilename(monologue, blob.type, profile);
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.style.display = "none";
@@ -18,9 +22,10 @@ export function triggerDownload(blob: Blob, monologue: Monologue): string {
 export async function shareRecording(
   blob: Blob,
   monologue: Monologue,
-  title: string
+  title: string,
+  profile?: StudentProfile | null
 ): Promise<boolean> {
-  const filename = buildRecordingFilename(monologue, blob.type);
+  const filename = buildRecordingFilename(monologue, blob.type, profile);
   const file = new File([blob], filename, { type: blob.type });
 
   if (navigator.share && navigator.canShare?.({ files: [file] })) {
